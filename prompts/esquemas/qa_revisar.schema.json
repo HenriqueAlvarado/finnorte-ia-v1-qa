@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "cobertura_tipos",
+    "casos_faltantes",
+    "cumple_qa08",
+    "hallazgos"
+  ],
+  "properties": {
+    "cobertura_tipos": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "positivo", "negativo", "limite",
+        "monto_cero", "monto_negativo", "limite_exacto",
+        "un_centavo_arriba", "idempotencia"
+      ],
+      "properties": {
+        "positivo": { "type": "integer", "minimum": 0 },
+        "negativo": { "type": "integer", "minimum": 0 },
+        "limite": { "type": "integer", "minimum": 0 },
+        "monto_cero": { "type": "integer", "minimum": 0 },
+        "monto_negativo": { "type": "integer", "minimum": 0 },
+        "limite_exacto": { "type": "integer", "minimum": 0 },
+        "un_centavo_arriba": { "type": "integer", "minimum": 0 },
+        "idempotencia": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "casos_faltantes": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["requisito", "tipo_faltante"],
+        "properties": {
+          "requisito": {
+            "type": "string",
+            "pattern": "^RF\\d{2}$"
+          },
+          "tipo_faltante": {
+            "enum": [
+              "positivo", "negativo", "limite",
+              "monto_cero", "monto_negativo", "limite_exacto",
+              "un_centavo_arriba", "idempotencia"
+            ]
+          }
+        }
+      }
+    },
+    "cumple_qa08": {
+      "type": "boolean"
+    },
+    "hallazgos": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["caso_id", "tipo", "detalle"],
+        "properties": {
+          "caso_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "tipo": {
+            "enum": [
+              "datos_reales",
+              "entonces_no_verificable",
+              "sin_regla_citada",
+              "id_mal_formado",
+              "tipo_invalido"
+            ]
+          },
+          "detalle": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}
