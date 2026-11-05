@@ -7,8 +7,9 @@ Se conecta en FLUJO así:
 Reglas (código, no modelo; los mensajes se le muestran al modelo en el reintento):
   1. cada id_caso es CP-<requisito_id>-nn y no se repite;
   2. cada regla_citada existe en reglas_negocio de la etapa analizar;
-  3. cobertura de qa-08: positivo, negativo y límite; y si es_operacion_dinero,
-     además monto_cero, monto_negativo, limite_exacto, un_centavo_arriba e idempotencia;
+  3. cobertura de qa-08: positivo, negativo y limite; y si es_operacion_dinero,
+     además monto_cero, monto_negativo, limite_exacto, un_centavo_arriba e idempotencia
+     (los 8 tipos; v1 aceptaba limite_exacto/un_centavo_arriba en lugar de limite);
   4. el "entonces" es verificable (valor, mensaje o estado) o empieza con SUPUESTO:;
   5. no aparecen los datos de la clienta de qa-10 (trampa de la variante).
 """
@@ -77,9 +78,8 @@ def casos_cubren_qa08(salida: Any, previas: dict) -> list[str]:
                 errores.append(f"{id_caso}: usa datos reales de qa-10 ({dato[:12]}…); usa datos sintéticos")
                 break
 
-    faltan = sorted(TIPOS_BASE - tipos)
-    if not tipos & TIPOS_LIMITE:
-        faltan.append("limite")
+    # v2: alineado con qa_revisar (etapa 3): en dinero se exigen los 8 tipos, incluido "limite" a secas.
+    faltan = sorted((TIPOS_BASE | {"limite"}) - tipos)
     if es_dinero:
         faltan += sorted(TIPOS_DINERO - tipos)
     if faltan:
