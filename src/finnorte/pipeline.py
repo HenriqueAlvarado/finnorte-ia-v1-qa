@@ -87,8 +87,37 @@ class Pipeline:
         salidas: dict = {}
         resultados: list[ResultadoEtapa] = []
         for etapa in self.etapas:
-            # TODO(A2): implementa esta parte (ver docstring y pruebas)
-            raise NotImplementedError("Pendiente: A2")
+            p = prompts.cargar(etapa.prompt, etapa.version)
+            valores = dict(entrada)
+            for k in etapa.usa:
+                v = salidas[k]
+                valores[k] = v if isinstance(v, str) else json.dumps(v, ensure_ascii=False, indent=2)
+            for var in p.variables:
+                valores.setdefault(var, "")
+            sistema, usuario = p.render(**valores)
+
+            t0 = time.perf_counter()
+            costo = 0.0
+            datos = None
+            errores: list[str] = []
+            for intentos in range(1, etapa.reintentos + 2):
+                if intentos == 1:
+                    consulta = usuario
+                else:
+                    consulta = (usuario + "\n\nTu respuesta anterior no cumplió el formato. Errores:\n"
+                               + "; ".join(errores[:5]) + "\n\nDevuelve SOLO el JSON corregido.")
+                r = llm.generar(consulta, sistema, json=p.salida_json, temperatura=etapa.temperatura,
+                                etiqueta=f"{self.nombre}/{etapa.nombre}/{p.nombre}")
+                costo += r.costo_usd
+                datos = r.datos
+                errores = validar_esquema(datos, p.esquema)
+                if not errores and etapa.validar:
+                    errores = etapa.validar(datos, salidas)
+                if not errores:
+                    break
+            latencia_ms = (time.perf_counter() - t0) * 1000
+
+            res = ResultadoEtapa(etapa.nombre, p.nombre, not errores, datos, errores, intentos, latencia_ms, costo)
             resultados.append(res)
             salidas[etapa.nombre] = res.salida
             trazas.registrar("etapa", flujo=self.nombre, etapa=res.nombre, prompt=res.prompt, ok=res.ok,
