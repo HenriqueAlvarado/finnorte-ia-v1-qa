@@ -124,9 +124,20 @@ def test_sin_id_no_reportado_es_error():
     assert any(e.startswith("el caso SIN-ID-1 tiene un id_caso") for e in correr(salida(cumple=False), casos=casos))
 
 
-def test_rf_de_tres_digitos_cuenta_pero_es_mal_formado():
+def test_rf_de_tres_digitos_es_otro_requisito_y_no_cuenta():
+    # con ^RF\d{2,}$ (convención de las etapas 1 y 2), RF123 sí es un requisito reconocible:
+    # el caso es de otro requisito, así que no cuenta para esta cobertura y es id_mal_formado.
     casos = {"casos": [caso(1, "positivo", id_caso="CP-RF123-01")] + CASOS["casos"][1:]}
-    assert correr(salida(cumple=False, hallazgos=[h("CP-RF123-01", "id_mal_formado")]), casos=casos) == []
+    ok = salida(cobertura={"positivo": 1}, cumple=False, hallazgos=[h("CP-RF123-01", "id_mal_formado")])
+    assert correr(ok, casos=casos) == []
+
+
+def test_requisito_id_de_tres_digitos_es_valido():
+    analizar = ANALIZAR | {"requisito_id": "RF123"}
+    casos = {"casos": [caso(1, "positivo", id_caso="CP-RF123-01"), caso(2, "negativo", id_caso="CP-RF123-02"),
+                       caso(3, "limite", id_caso="CP-RF123-03")]}
+    ok = salida(cobertura={"positivo": 1})
+    assert correr(ok, analizar=analizar, casos=casos) == []
 
 
 # --- datos reales: unión modelo + código y orden de 4 pasos --------------------------------
@@ -191,3 +202,66 @@ def test_mi_salida_no_puede_tener_valores_sensibles_ni_de_prueba():
         errores = correr(datos)
         assert any(f"tu respuesta contiene un valor con forma de {tipo}" in e for e in errores), tipo
         assert all(valor not in e for e in errores)
+
+
+# --- caso real de RF12 (operación de dinero) con la respuesta del modelo ---------------------
+# Corrida real con gemini-3.5-flash sobre estos datos: el modelo acertó los 3 problemas puestos
+# a propósito (falta el tipo limite, CLABE ajena en CP-RF12-02, entonces no verificable en el 07).
+# La segunda prueba altera esa respuesta a mano para dejar registro de qué marca validar=.
+
+CLABE_AJENA = "012180004567891234"          # no está en datos_prueba: debe salir datos_reales
+
+ANALIZAR_DINERO = {
+    "requisito_id": "RF12", "es_operacion_dinero": True,
+    "reglas_negocio": [{"id": "REG-RF12-01", "texto": "La CLABE debe tener 18 dígitos y dígito verificador válido."},
+                       {"id": "REG-RF12-02", "texto": "El límite diario de transferencia SPEI es de $50,000 MXN."}],
+    "datos_prueba": ["646180111222333344"], "ambiguedades": [],
+}
+
+
+def _caso_dinero(n, tipo, cuando, entonces, dado=None, regla="REG-RF12-02"):
+    return caso(n, tipo, titulo=f"Transferencia SPEI · {tipo}", cuando=cuando, entonces=entonces,
+                dado=dado or "un cliente de nivel 2 con CLABE destino 646180111222333344", regla_citada=regla)
+
+
+CASOS_DINERO = {"casos": [
+    _caso_dinero(1, "positivo", "transfiere 1,000.00 MXN", "el sistema devuelve el estado 'aceptada' y el folio SPEI"),
+    _caso_dinero(2, "positivo", "transfiere 2,500.00 MXN", "el sistema devuelve el estado 'aceptada'",
+                 dado=f"un cliente de nivel 2 con CLABE destino {CLABE_AJENA}"),
+    _caso_dinero(3, "negativo", "transfiere a una CLABE de 17 dígitos",
+                 "el sistema devuelve el código FN-4001 y el mensaje 'CLABE inválida'"),
+    _caso_dinero(4, "monto_cero", "transfiere 0.00 MXN", "el sistema devuelve el código 422 y 'monto inválido'"),
+    _caso_dinero(5, "monto_negativo", "transfiere -100.00 MXN", "el sistema devuelve el código 422 y 'monto inválido'"),
+    _caso_dinero(6, "limite_exacto", "transfiere 50,000.00 MXN", "el sistema devuelve el estado 'aceptada'"),
+    _caso_dinero(7, "un_centavo_arriba", "transfiere 50,000.01 MXN", "el sistema responde correctamente"),
+    _caso_dinero(8, "idempotencia", "repite la solicitud con la misma Idempotency-Key",
+                 "el sistema devuelve el mismo folio SPEI y no genera un segundo cargo"),
+]}
+
+# Respuesta real del modelo en esa corrida (copiada tal cual, sin los detalles largos).
+RESPUESTA_MODELO = {
+    "cobertura_tipos": {"positivo": 1, "negativo": 1, "limite": 0, "monto_cero": 1, "monto_negativo": 1,
+                        "limite_exacto": 1, "un_centavo_arriba": 1, "idempotencia": 1},
+    "casos_faltantes": [{"requisito": "RF12", "tipo_faltante": "limite"}],
+    "cumple_qa08": False,
+    "hallazgos": [h("CP-RF12-02", "datos_reales", "patrón de CLABE que no está listado en datos_prueba"),
+                  h("CP-RF12-07", "entonces_no_verificable", "no da un valor, mensaje exacto ni estado concreto")],
+}
+
+
+def test_respuesta_real_del_modelo_pasa():
+    assert correr(RESPUESTA_MODELO, analizar=ANALIZAR_DINERO, casos=CASOS_DINERO) == []
+
+
+def test_respuesta_alterada_dispara_los_cinco_errores():
+    """Cuenta de más, oculta los hallazgos y afirma que cumple: manda el código, no el modelo."""
+    alterada = {"cobertura_tipos": dict(RESPUESTA_MODELO["cobertura_tipos"], positivo=2, limite=1),
+                "casos_faltantes": [], "cumple_qa08": True, "hallazgos": []}
+    assert correr(alterada, analizar=ANALIZAR_DINERO, casos=CASOS_DINERO) == [
+        "el caso CP-RF12-02 tiene un valor con forma de CLABE en el campo dado "
+        "que no es dato de prueba, y falta su hallazgo datos_reales",
+        "cobertura_tipos.positivo reportado como 2 pero el conteo real en casos es 1",
+        "cobertura_tipos.limite reportado como 1 pero el conteo real en casos es 0",
+        "casos_faltantes debe incluir limite para RF12",
+        "cumple_qa08 reportado como true pero debe ser false: hay tipos faltantes, datos_reales",
+    ]

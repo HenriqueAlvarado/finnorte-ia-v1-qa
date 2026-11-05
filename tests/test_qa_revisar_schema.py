@@ -93,9 +93,15 @@ def test_cobertura_no_entera():
 # --- casos_faltantes ------------------------------------------------------------------------
 
 def test_requisito_patron_invalido():
-    for req in ("RF1", "rf12", "RF123", "RF-12", "CP-RF12-01", ""):
+    for req in ("RF1", "rf12", "RF", "RF-12", "CP-RF12-01", ""):
         d = salida(casos_faltantes=[{"requisito": req, "tipo_faltante": "positivo"}])
         assert not valido(d), req
+
+
+def test_requisito_acepta_dos_o_mas_digitos():
+    # misma convención que las etapas 1 y 2: ^RF\d{2,}$
+    for req in ("RF07", "RF12", "RF123"):
+        assert valido(salida(casos_faltantes=[{"requisito": req, "tipo_faltante": "positivo"}])), req
 
 
 def test_tipo_faltante_acepta_los_8():

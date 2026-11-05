@@ -26,9 +26,9 @@ DOMINIOS_PRUEBA = {"ejemplo.com", "test.com"}     # además, cualquier dominio t
 TIPOS_SENSIBLES = ("CLABE", "CORREO", "TELEFONO")
 QA10 = RAIZ / "corpus" / "v1-qa" / "qa-10-aclaraciones-ejemplo.md"
 
-_RE_REQUISITO = re.compile(r"^RF\d{2}$")
-_RE_RF = re.compile(r"RF\d{2}(?!\d)")
-_RE_ID_CASO = re.compile(r"^CP-(RF\d{2})-\d{2}$")
+_RE_REQUISITO = re.compile(r"^RF\d{2,}$")       # RF + 2 o más dígitos, como la etapa 1 y la 2
+_RE_RF = re.compile(r"RF\d{2,}")
+_RE_ID_CASO = re.compile(r"^CP-(RF\d{2,})-\d{2}$")
 
 
 # --- detección de datos sensibles -----------------------------------------------------------
