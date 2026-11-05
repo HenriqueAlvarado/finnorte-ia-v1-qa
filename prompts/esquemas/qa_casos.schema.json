@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["casos"],
+  "additionalProperties": false,
+  "properties": {
+    "casos": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "required": ["id_caso", "titulo", "tipo", "dado", "cuando", "entonces", "regla_citada"],
+        "additionalProperties": false,
+        "properties": {
+          "id_caso": { "type": "string", "pattern": "^CP-RF\\d+-\\d{2}$" },
+          "titulo": { "type": "string", "minLength": 5 },
+          "tipo": {
+            "type": "string",
+            "enum": [
+              "positivo",
+              "negativo",
+              "limite",
+              "monto_cero",
+              "monto_negativo",
+              "limite_exacto",
+              "un_centavo_arriba",
+              "idempotencia"
+            ]
+          },
+          "dado": { "type": "string", "minLength": 5 },
+          "cuando": { "type": "string", "minLength": 5 },
+          "entonces": { "type": "string", "minLength": 5 },
+          "regla_citada": { "type": "string", "pattern": "^REG-RF\\d+-\\d{2}$" },
+          "fuente": { "type": "string", "pattern": "^qa-\\d{2}$" }
+        }
+      }
+    }
+  }
+}
