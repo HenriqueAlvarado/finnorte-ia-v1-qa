@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "requisito_id",
+    "es_operacion_dinero",
+    "reglas_negocio",
+    "datos_prueba",
+    "ambiguedades"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "requisito_id": {
+      "type": "string",
+      "pattern": "^RF[0-9]{2,}$"
+    },
+    "es_operacion_dinero": {
+      "type": "boolean"
+    },
+    "reglas_negocio": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "texto"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^REG-RF[0-9]{2,}-[0-9]{2}$"
+          },
+          "texto": {
+            "type": "string",
+            "minLength": 5
+          }
+        }
+      }
+    },
+    "datos_prueba": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "ambiguedades": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
