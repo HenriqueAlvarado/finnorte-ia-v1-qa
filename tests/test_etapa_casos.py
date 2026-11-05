@@ -26,7 +26,8 @@ def _caso(n, tipo, entonces="se acepta la transferencia", regla="REG-RF12-01"):
 COMPLETO = {"casos": [_caso(1, "positivo"), _caso(2, "negativo", "se rechaza con el mensaje «El monto excede el límite por operación»"),
                       _caso(3, "monto_cero", "se rechaza"), _caso(4, "monto_negativo", "se rechaza"),
                       _caso(5, "limite_exacto", "se acepta con 50,000.00"), _caso(6, "un_centavo_arriba", "se rechaza con 50,000.01"),
-                      _caso(7, "idempotencia", "no se genera un segundo cargo", "REG-RF12-02")]}
+                      _caso(7, "idempotencia", "no se genera un segundo cargo", "REG-RF12-02"),
+                      _caso(8, "limite", "se acepta con 8,000.00 en nivel 1")]}
 
 
 def test_salida_completa_es_valida():
@@ -45,6 +46,14 @@ def test_dispara_cuando_faltan_tipos_de_dinero():
     parcial = {"casos": COMPLETO["casos"][:3]}
     errores = casos_cubren_qa08(parcial, {"analizar": ANALISIS})
     assert any("idempotencia" in e and "un_centavo_arriba" in e for e in errores)
+
+
+def test_dinero_sin_tipo_limite_falla_aunque_haya_limite_exacto():
+    """Fallo real medido en v1: con limite_exacto y un_centavo_arriba pero sin "limite", la etapa 3 marca casos_faltantes."""
+    sin_limite = {"casos": [c for c in COMPLETO["casos"] if c["tipo"] != "limite"] + [_caso(8, "limite_exacto", "se acepta con 8,000.00")]}
+    assert not any(c["tipo"] == "limite" for c in sin_limite["casos"])
+    errores = casos_cubren_qa08(sin_limite, {"analizar": ANALISIS})
+    assert any("limite" in e and "Faltan tipos" in e for e in errores)
 
 
 def test_no_exige_tipos_de_dinero_si_no_es_dinero():
