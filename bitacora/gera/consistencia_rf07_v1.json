@@ -1,0 +1,147 @@
+[
+  {
+    "ejecucion": 1,
+    "requisito": "RF07",
+    "prompt": "qa_analizar",
+    "version": 1,
+    "modelo": "gemini-3.5-flash",
+    "fecha_utc": "2026-11-05T09:52:18.669225+00:00",
+    "ok": true,
+    "intentos": 1,
+    "errores": [],
+    "latencia_ms": 40220.170161999704,
+    "costo_usd": 0.0012829,
+    "salida": {
+      "requisito_id": "RF07",
+      "es_operacion_dinero": false,
+      "reglas_negocio": [
+        {
+          "id": "REG-RF07-01",
+          "texto": "El sistema debe permitir el registro de usuarios utilizando un correo electrónico y una contraseña."
+        },
+        {
+          "id": "REG-RF07-02",
+          "texto": "El sistema debe validar que el correo electrónico ingresado sea único y rechazar el registro si ya existe en el sistema."
+        },
+        {
+          "id": "REG-RF07-03",
+          "texto": "El sistema debe rechazar cualquier contraseña que tenga una longitud menor a 8 caracteres."
+        },
+        {
+          "id": "REG-RF07-04",
+          "texto": "El sistema debe mostrar un mensaje de confirmación al usuario únicamente cuando el registro sea exitoso."
+        }
+      ],
+      "datos_prueba": [
+        "Correo electrónico no registrado en el sistema",
+        "Correo electrónico previamente registrado en el sistema",
+        "Contraseña de 7 caracteres (caso límite no permitido)",
+        "Contraseña de 8 caracteres (caso límite permitido)",
+        "Contraseña de más de 8 caracteres"
+      ],
+      "ambiguedades": [
+        "No se especifican las reglas complejas para la contraseña (requerimiento de mayúsculas, minúsculas, números o caracteres especiales).",
+        "No se define el texto o contenido exacto del mensaje de confirmación que debe mostrarse tras el registro correcto.",
+        "No se especifica si se enviará un correo de verificación o activación de cuenta tras completar el registro.",
+        "No se definen los mensajes de error exactos al intentar registrar un correo duplicado o una contraseña con menos de 8 caracteres.",
+        "No se especifica si existe un límite máximo de caracteres permitido para la contraseña o el correo electrónico."
+      ]
+    }
+  },
+  {
+    "ejecucion": 2,
+    "requisito": "RF07",
+    "prompt": "qa_analizar",
+    "version": 1,
+    "modelo": "gemini-3.5-flash",
+    "fecha_utc": "2026-11-05T09:52:58.890551+00:00",
+    "ok": true,
+    "intentos": 1,
+    "errores": [],
+    "latencia_ms": 18190.236372000072,
+    "costo_usd": 0.0012354,
+    "salida": {
+      "requisito_id": "RF07",
+      "es_operacion_dinero": false,
+      "reglas_negocio": [
+        {
+          "id": "REG-RF07-01",
+          "texto": "El sistema debe permitir el registro de usuarios utilizando un correo electrónico y una contraseña."
+        },
+        {
+          "id": "REG-RF07-02",
+          "texto": "El sistema debe validar que el correo electrónico ingresado sea único."
+        },
+        {
+          "id": "REG-RF07-03",
+          "texto": "El sistema debe rechazar cualquier contraseña que tenga menos de 8 caracteres."
+        },
+        {
+          "id": "REG-RF07-04",
+          "texto": "El sistema debe mostrar un mensaje de confirmación cuando el registro se realice de forma correcta."
+        }
+      ],
+      "datos_prueba": [
+        "Correo electrónico no registrado previamente",
+        "Correo electrónico previamente registrado en el sistema",
+        "Contraseña de 7 caracteres (límite inválido)",
+        "Contraseña de 8 caracteres (límite válido)",
+        "Contraseña de más de 8 caracteres"
+      ],
+      "ambiguedades": [
+        "No se especifica el texto o contenido exacto del mensaje de confirmación tras un registro exitoso.",
+        "No se indican reglas adicionales de complejidad para la contraseña (como requerimiento de mayúsculas, minúsculas, números o caracteres especiales).",
+        "No se especifican los mensajes de error exactos para el caso de correo duplicado o contraseña con longitud menor a 8 caracteres.",
+        "No se especifica si el correo debe seguir una validación de formato/sintaxis particular ni si requiere un proceso posterior de confirmación/verificación (p. ej. envío de enlace por correo)."
+      ]
+    }
+  },
+  {
+    "ejecucion": 3,
+    "requisito": "RF07",
+    "prompt": "qa_analizar",
+    "version": 1,
+    "modelo": "gemini-3.5-flash",
+    "fecha_utc": "2026-11-05T09:53:17.081369+00:00",
+    "ok": true,
+    "intentos": 1,
+    "errores": [],
+    "latencia_ms": 30414.135121000072,
+    "costo_usd": 0.0011954,
+    "salida": {
+      "requisito_id": "RF07",
+      "es_operacion_dinero": false,
+      "reglas_negocio": [
+        {
+          "id": "REG-RF07-01",
+          "texto": "El sistema debe permitir el registro de usuarios utilizando correo y contraseña."
+        },
+        {
+          "id": "REG-RF07-02",
+          "texto": "El sistema debe validar que el correo ingresado sea único."
+        },
+        {
+          "id": "REG-RF07-03",
+          "texto": "El sistema debe rechazar contraseñas con menos de 8 caracteres."
+        },
+        {
+          "id": "REG-RF07-04",
+          "texto": "El sistema debe mostrar un mensaje de confirmación al registrarse correctamente."
+        }
+      ],
+      "datos_prueba": [
+        "Correo electrónico no registrado en el sistema",
+        "Correo electrónico previamente registrado en el sistema",
+        "Contraseña con longitud de 7 caracteres (límite negativo)",
+        "Contraseña con longitud de 8 caracteres (límite positivo)"
+      ],
+      "ambiguedades": [
+        "No se define la sintaxis o formato válido requerido para el correo electrónico.",
+        "No se especifican reglas de complejidad adicionales para la contraseña (uso de mayúsculas, minúsculas, números o caracteres especiales).",
+        "No se indica el mensaje de error específico a mostrar cuando el correo ya existe o cuando la contraseña tiene menos de 8 caracteres.",
+        "No se especifica el texto o contenido exacto del mensaje de confirmación tras un registro exitoso.",
+        "No se aclara si se requiere un proceso de verificación de correo (ej. envío de token, OTP o enlace de activación)."
+      ]
+    }
+  }
+]
