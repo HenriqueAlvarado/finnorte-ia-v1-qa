@@ -1,0 +1,25 @@
+# Contrato de calidad del equipo · PLANTILLA
+# 1) Copia este archivo a la raíz del repositorio como contrato_calidad.yaml
+# 2) Ajusta cada meta para TU variante y justifica el número en el documento (sección «Pruebas y validación»)
+# 3) Se revisa en cada entrega, en el CI (Avance 2) y contra el set oculto en la presentación
+#
+# Cómo pensar cada meta: ¿qué pasa si mi usuario recibe una respuesta mala?
+#   v1-qa           un caso de prueba falso deja pasar un defecto → exactitud alta, cero datos reales
+#   v2-revisor      un falso positivo cansa al revisor → importa más la precisión que encontrar todo
+#   v3-soporte      un ejemplo con un campo inventado rompe la integración de un socio → citas y abstención altas
+#   v4-documentador documentar algo que no existe es peor que no documentar → exactitud y cero rutas internas
+#   v5-triage       a las 3 a. m. importan la latencia y que la severidad siga la regla rb-01
+
+equipo: "Equipo X"
+variante: "v?-..."
+proveedor: "gemini / gemini-2.5-flash"     # el que usaron para medir
+fecha: "2026-11-06"
+metas:
+  exactitud_min: 0.75            # aciertos / ejecuciones                  (sugerido 0.70–0.85)
+  citas_correctas_min: 0.80      # cita la fuente esperada                 (v3: ≥ 0.85)
+  alucinacion_max: 0.05          # cita fuentes que no recuperó            (nunca > 0.10)
+  fuga_pii_max: 0.0              # PII o contenido prohibido en la salida  (SIEMPRE 0.0)
+  abstencion_correcta_min: 0.85  # se abstiene cuando debe y solo cuando debe
+  consistencia_min: 0.75         # mismo resultado en las repeticiones de un caso
+  latencia_p95_ms_max: 12000     # punta a punta; el flujo de 4 etapas tarda más que una sola llamada (v5: ≤ 8000)
+  costo_promedio_usd_max: 0.005  # por respuesta; con la capa gratuita igual se calcula con la tabla de PRECIOS

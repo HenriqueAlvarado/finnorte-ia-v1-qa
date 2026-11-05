@@ -1,0 +1,2 @@
+{"pregunta": "EJEMPLO (borra esta línea): subí una contraseña al repo por error", "esperado": "ing-02", "tipo": "sinonimo"}
+{"pregunta": "EJEMPLO (borra esta línea): ¿qué dice la política ing-07 sobre errores REST?", "esperado": "ing-07", "tipo": "exacto"}

@@ -1,0 +1,1059 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "API de FinNorte para socios",
+    "version": "2026-06",
+    "description": "Especificación derivada de la documentación pública del corpus v3-soporte (api-01 a api-10). Datos ficticios para el curso LSCA2318. No incluye información de api-11 (confidencial).",
+    "x-fuentes": [
+      "api-01",
+      "api-02",
+      "api-03",
+      "api-04",
+      "api-05",
+      "api-06",
+      "api-07",
+      "api-08",
+      "api-09",
+      "api-10"
+    ]
+  },
+  "servers": [
+    {
+      "url": "https://api.sandbox.finnorte.mx",
+      "description": "Sandbox: datos ficticios, sin dinero real (api-01)"
+    },
+    {
+      "url": "https://api.finnorte.mx",
+      "description": "Producción: requiere contrato y certificación técnica (api-01)"
+    }
+  ],
+  "security": [
+    {
+      "oauth2": []
+    }
+  ],
+  "paths": {
+    "/oauth/token": {
+      "post": {
+        "operationId": "obtenerToken",
+        "summary": "Obtener token de acceso (client credentials)",
+        "x-fuente": "api-02",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "grant_type",
+                  "client_id",
+                  "client_secret",
+                  "scope"
+                ],
+                "properties": {
+                  "grant_type": {
+                    "const": "client_credentials"
+                  },
+                  "client_id": {
+                    "type": "string"
+                  },
+                  "client_secret": {
+                    "type": "string"
+                  },
+                  "scope": {
+                    "type": "string",
+                    "description": "Uno o varios separados por espacio",
+                    "example": "cuentas:leer transferencias:crear"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Token emitido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "access_token",
+                    "token_type",
+                    "expires_in"
+                  ],
+                  "properties": {
+                    "access_token": {
+                      "type": "string"
+                    },
+                    "token_type": {
+                      "const": "Bearer"
+                    },
+                    "expires_in": {
+                      "type": "integer",
+                      "const": 900,
+                      "description": "15 minutos; no hay refresh token"
+                    },
+                    "scope": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Credenciales inválidas",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problema"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/cuentas/{cuenta_id}": {
+      "get": {
+        "operationId": "obtenerCuenta",
+        "summary": "Datos de la cuenta",
+        "x-fuente": "api-03",
+        "security": [
+          {
+            "oauth2": [
+              "cuentas:leer"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "cuenta_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "cta_123"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cuenta",
+            "headers": {
+              "X-RateLimit-Limit": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "X-RateLimit-Remaining": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "X-RateLimit-Reset": {
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Cuenta"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "La cuenta no existe o no está vinculada al socio (no se revela cuál)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token inválido o expirado (FN-4011)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problema"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Scope insuficiente (FN-4031)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problema"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Límite de tasa excedido (FN-4291)",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                },
+                "description": "Segundos a esperar"
+              }
+            },
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problema"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/cuentas/{cuenta_id}/saldo": {
+      "get": {
+        "operationId": "obtenerSaldo",
+        "summary": "Saldo disponible y retenido en centavos",
+        "x-fuente": "api-03",
+        "security": [
+          {
+            "oauth2": [
+              "cuentas:leer"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "cuenta_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "cta_123"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Saldo",
+            "headers": {
+              "X-RateLimit-Limit": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "X-RateLimit-Remaining": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "X-RateLimit-Reset": {
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Saldo"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Cuenta no vinculada",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token inválido o expirado (FN-4011)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problema"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Scope insuficiente (FN-4031)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problema"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Límite de tasa excedido (FN-4291)",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                },
+                "description": "Segundos a esperar"
+              }
+            },
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problema"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/cuentas/{cuenta_id}/movimientos": {
+      "get": {
+        "operationId": "listarMovimientos",
+        "summary": "Movimientos paginados por cursor",
+        "x-fuente": "api-03",
+        "security": [
+          {
+            "oauth2": [
+              "cuentas:leer"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "cuenta_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "cta_123"
+            }
+          },
+          {
+            "name": "desde",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "hasta",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Máximo 90 días después de desde"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 50
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Página de movimientos",
+            "headers": {
+              "X-RateLimit-Limit": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "X-RateLimit-Remaining": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "X-RateLimit-Reset": {
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "movimientos": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Movimiento"
+                      }
+                    },
+                    "siguiente_cursor": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Cuenta no vinculada",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problema"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Rango mayor a 90 días o parámetros inválidos",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token inválido o expirado (FN-4011)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problema"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Scope insuficiente (FN-4031)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problema"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Límite de tasa excedido (FN-4291)",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                },
+                "description": "Segundos a esperar"
+              }
+            },
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problema"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/cuentas/{id}": {
+      "get": {
+        "operationId": "obtenerCuentaV1",
+        "summary": "Datos de la cuenta (versión 1, deprecada)",
+        "deprecated": true,
+        "x-fuente": "api-08",
+        "x-retiro": "2026-12-31",
+        "x-reemplazo": "/v2/cuentas/{cuenta_id}",
+        "security": [
+          {
+            "oauth2": [
+              "cuentas:leer"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cuenta (formato v1)",
+            "headers": {
+              "Sunset": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Fecha de retiro"
+              }
+            }
+          },
+          "401": {
+            "description": "Token inválido o expirado (FN-4011)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problema"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Scope insuficiente (FN-4031)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problema"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Límite de tasa excedido (FN-4291)",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                },
+                "description": "Segundos a esperar"
+              }
+            },
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problema"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/transferencias": {
+      "post": {
+        "operationId": "crearTransferencia",
+        "summary": "Crear una transferencia SPEI",
+        "x-fuente": "api-04",
+        "security": [
+          {
+            "oauth2": [
+              "transferencias:crear"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Misma llave y mismo cuerpo en 24 h devuelve la misma transferencia (200); otro cuerpo devuelve 409 FN-4091"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NuevaTransferencia"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Aceptada en estado pendiente",
+            "headers": {
+              "X-RateLimit-Limit": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "X-RateLimit-Remaining": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "X-RateLimit-Reset": {
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Transferencia"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Repetición idempotente: misma transferencia",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Transferencia"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "FN-4091 · Idempotency-Key reutilizada con otro cuerpo",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problema"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "FN-4001 CLABE inválida · FN-4002 fondos insuficientes · FN-4003 excede límite por operación · FN-4004 límite diario",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problema"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "FN-5031 · SPEI no disponible; reintentar con espera exponencial",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token inválido o expirado (FN-4011)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problema"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Scope insuficiente (FN-4031)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problema"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Límite de tasa excedido (FN-4291)",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                },
+                "description": "Segundos a esperar"
+              }
+            },
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problema"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/transferencias/{id}": {
+      "get": {
+        "operationId": "obtenerTransferencia",
+        "summary": "Consultar el estado de una transferencia",
+        "x-fuente": "api-04",
+        "security": [
+          {
+            "oauth2": [
+              "transferencias:leer"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Transferencia",
+            "headers": {
+              "X-RateLimit-Limit": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "X-RateLimit-Remaining": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "X-RateLimit-Reset": {
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Transferencia"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No existe o no pertenece al socio",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token inválido o expirado (FN-4011)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problema"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Scope insuficiente (FN-4031)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problema"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Límite de tasa excedido (FN-4291)",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                },
+                "description": "Segundos a esperar"
+              }
+            },
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problema"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "webhooks": {
+    "eventoTransferencia": {
+      "post": {
+        "summary": "Evento de transferencia enviado a la URL del socio",
+        "x-fuente": "api-05",
+        "parameters": [
+          {
+            "name": "X-FinNorte-Signature",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "HMAC-SHA256 del cuerpo con el secreto del webhook"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Evento"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "El socio debe responder 2xx en máximo 10 s; si no, 5 reintentos (1, 2, 4, 8, 16 min)"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "oauth2": {
+        "type": "oauth2",
+        "flows": {
+          "clientCredentials": {
+            "tokenUrl": "/oauth/token",
+            "scopes": {
+              "cuentas:leer": "Leer cuentas, saldos y movimientos",
+              "transferencias:crear": "Crear transferencias",
+              "transferencias:leer": "Consultar transferencias",
+              "webhooks:administrar": "Administrar webhooks"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Problema": {
+        "type": "object",
+        "required": [
+          "type",
+          "title",
+          "status",
+          "code",
+          "trace_id"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string",
+            "enum": [
+              "FN-4001",
+              "FN-4002",
+              "FN-4003",
+              "FN-4004",
+              "FN-4011",
+              "FN-4031",
+              "FN-4091",
+              "FN-4291",
+              "FN-5031"
+            ]
+          },
+          "trace_id": {
+            "type": "string",
+            "description": "Inclúyelo al contactar a soporte"
+          }
+        },
+        "x-fuente": "api-06"
+      },
+      "Cuenta": {
+        "type": "object",
+        "properties": {
+          "cuenta_id": {
+            "type": "string"
+          },
+          "nivel": {
+            "type": "string"
+          },
+          "estado": {
+            "type": "string"
+          },
+          "clabe_ultimos4": {
+            "type": "string",
+            "pattern": "^\\d{4}$"
+          }
+        },
+        "x-fuente": "api-03"
+      },
+      "Saldo": {
+        "type": "object",
+        "properties": {
+          "disponible_centavos": {
+            "type": "integer"
+          },
+          "retenido_centavos": {
+            "type": "integer"
+          },
+          "moneda": {
+            "const": "MXN"
+          }
+        },
+        "x-fuente": "api-03"
+      },
+      "Movimiento": {
+        "type": "object",
+        "properties": {
+          "fecha": {
+            "type": "string",
+            "format": "date"
+          },
+          "monto_centavos": {
+            "type": "integer"
+          },
+          "concepto": {
+            "type": "string"
+          }
+        },
+        "x-nota": "Campos de ejemplo: el corpus no detalla la estructura del movimiento"
+      },
+      "NuevaTransferencia": {
+        "type": "object",
+        "required": [
+          "cuenta_origen",
+          "clabe_destino",
+          "monto_centavos",
+          "concepto",
+          "referencia_numerica"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "cuenta_origen": {
+            "type": "string"
+          },
+          "clabe_destino": {
+            "type": "string",
+            "pattern": "^\\d{18}$"
+          },
+          "monto_centavos": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "concepto": {
+            "type": "string",
+            "maxLength": 40
+          },
+          "referencia_numerica": {
+            "type": "string",
+            "pattern": "^\\d{7}$"
+          }
+        },
+        "x-fuente": "api-04"
+      },
+      "Transferencia": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "estado": {
+            "type": "string",
+            "enum": [
+              "pendiente",
+              "liquidada",
+              "rechazada",
+              "devuelta"
+            ]
+          },
+          "monto_centavos": {
+            "type": "integer"
+          },
+          "clabe_destino": {
+            "type": "string"
+          },
+          "concepto": {
+            "type": "string"
+          }
+        },
+        "x-fuente": "api-04"
+      },
+      "Evento": {
+        "type": "object",
+        "required": [
+          "evento_id",
+          "tipo",
+          "timestamp"
+        ],
+        "properties": {
+          "evento_id": {
+            "type": "string",
+            "description": "Para deduplicar"
+          },
+          "tipo": {
+            "type": "string",
+            "enum": [
+              "transferencia.liquidada",
+              "transferencia.rechazada",
+              "transferencia.devuelta"
+            ]
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Rechazar eventos con más de 5 minutos"
+          },
+          "transferencia": {
+            "$ref": "#/components/schemas/Transferencia"
+          }
+        },
+        "x-fuente": "api-05"
+      }
+    }
+  },
+  "x-finnorte-retirados": [
+    {
+      "ruta": "GET /v1/saldos",
+      "retirado": "2026-06-30",
+      "reemplazo": "GET /v2/cuentas/{cuenta_id}/saldo",
+      "fuente": "api-08"
+    }
+  ],
+  "x-finnorte-limites": {
+    "solicitudes_por_minuto": 100,
+    "transferencias_por_minuto": 20,
+    "fuente": "api-07"
+  }
+}
