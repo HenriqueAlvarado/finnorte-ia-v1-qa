@@ -124,9 +124,20 @@ def test_sin_id_no_reportado_es_error():
     assert any(e.startswith("el caso SIN-ID-1 tiene un id_caso") for e in correr(salida(cumple=False), casos=casos))
 
 
-def test_rf_de_tres_digitos_cuenta_pero_es_mal_formado():
+def test_rf_de_tres_digitos_es_otro_requisito_y_no_cuenta():
+    # con ^RF\d{2,}$ (convención de las etapas 1 y 2), RF123 sí es un requisito reconocible:
+    # el caso es de otro requisito, así que no cuenta para esta cobertura y es id_mal_formado.
     casos = {"casos": [caso(1, "positivo", id_caso="CP-RF123-01")] + CASOS["casos"][1:]}
-    assert correr(salida(cumple=False, hallazgos=[h("CP-RF123-01", "id_mal_formado")]), casos=casos) == []
+    ok = salida(cobertura={"positivo": 1}, cumple=False, hallazgos=[h("CP-RF123-01", "id_mal_formado")])
+    assert correr(ok, casos=casos) == []
+
+
+def test_requisito_id_de_tres_digitos_es_valido():
+    analizar = ANALIZAR | {"requisito_id": "RF123"}
+    casos = {"casos": [caso(1, "positivo", id_caso="CP-RF123-01"), caso(2, "negativo", id_caso="CP-RF123-02"),
+                       caso(3, "limite", id_caso="CP-RF123-03")]}
+    ok = salida(cobertura={"positivo": 1})
+    assert correr(ok, analizar=analizar, casos=casos) == []
 
 
 # --- datos reales: unión modelo + código y orden de 4 pasos --------------------------------

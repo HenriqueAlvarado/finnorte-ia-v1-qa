@@ -38,7 +38,7 @@
         "properties": {
           "requisito": {
             "type": "string",
-            "pattern": "^RF\\d{2}$"
+            "pattern": "^RF\\d{2,}$"
           },
           "tipo_faltante": {
             "enum": [

@@ -27,7 +27,7 @@ Cómo identificar cada caso (campo caso_id de los hallazgos):
 - Si el caso no trae id_caso o viene vacío, usa SIN-ID-n, donde n es la posición del caso en la lista empezando en 1 (por ejemplo, SIN-ID-3 para el tercer caso).
 
 Hallazgos. Reporta uno por cada problema; un mismo caso puede tener varios. Si no hay problemas, hallazgos es una lista vacía. Cada hallazgo tiene caso_id, tipo y detalle. Tipos:
-- id_mal_formado: el id_caso falta, no sigue exactamente el formato CP-RFxx-nn (RF y dos dígitos, guion, dos dígitos; por ejemplo CP-RF07-03), o su RFxx no coincide con el requisito_id del análisis.
+- id_mal_formado: el id_caso falta, no sigue exactamente el formato CP-RFxx-nn (RF y dos o más dígitos, guion, dos dígitos; por ejemplo CP-RF07-03), o su RFxx no coincide con el requisito_id del análisis.
 - tipo_invalido: el tipo del caso no es uno de los 8 tipos.
 - sin_regla_citada: regla_citada está vacía, o cita un id que no aparece en reglas_negocio del análisis.
 - entonces_no_verificable: el "entonces" no da un valor, un mensaje exacto o un estado concreto. No verificable: "el sistema responde correctamente". Verificable: "el sistema devuelve el código 403 y el mensaje 'límite diario excedido'". Si el "entonces" empieza con "SUPUESTO:" (con o sin espacio después), el caso maneja bien la información faltante: NO es hallazgo.
@@ -45,7 +45,7 @@ cumple_qa08 es true solo si casos_faltantes está vacío Y no hay ningún hallaz
 
 Situaciones especiales:
 - Si no hay casos: todas las llaves de cobertura_tipos en 0, todos los tipos obligatorios en casos_faltantes, cumple_qa08 false y hallazgos vacío.
-- Si el análisis viene vacío, sin requisito_id o con un requisito_id que no tiene la forma exacta RFxx (RF y dos dígitos): todas las llaves de cobertura_tipos en 0, casos_faltantes vacío, cumple_qa08 false y hallazgos vacío.
+- Si el análisis viene vacío, sin requisito_id o con un requisito_id que no tiene la forma RFxx (RF y dos o más dígitos): todas las llaves de cobertura_tipos en 0, casos_faltantes vacío, cumple_qa08 false y hallazgos vacío.
 
 ### USUARIO
 ANÁLISIS DEL REQUISITO (salida de la etapa 1):
