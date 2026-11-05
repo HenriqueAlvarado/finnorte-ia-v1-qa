@@ -1,0 +1,72 @@
+[
+  {
+    "ejecucion": 1,
+    "requisito": "RF07",
+    "prompt": "qa_analizar",
+    "version": 2,
+    "modelo": "gemini-3.5-flash",
+    "fecha_utc": "2026-11-05T09:57:07.630761+00:00",
+    "ok": false,
+    "error_proveedor": "LLMError",
+    "detalle": "HTTP 503: {\n  \"error\": {\n    \"code\": 503,\n    \"message\": \"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\",\n    \"status\": \"UNAVAILABLE\"\n  }\n}\n"
+  },
+  {
+    "ejecucion": 2,
+    "requisito": "RF07",
+    "prompt": "qa_analizar",
+    "version": 2,
+    "modelo": "gemini-3.5-flash",
+    "fecha_utc": "2026-11-05T09:57:30.940381+00:00",
+    "ok": true,
+    "intentos": 1,
+    "errores": [],
+    "latencia_ms": 12612.048576000234,
+    "costo_usd": 0.0012792,
+    "salida": {
+      "requisito_id": "RF07",
+      "es_operacion_dinero": false,
+      "reglas_negocio": [
+        {
+          "id": "REG-RF07-01",
+          "texto": "El sistema deberá permitir registrarse utilizando un correo electrónico y una contraseña."
+        },
+        {
+          "id": "REG-RF07-02",
+          "texto": "El sistema deberá validar que el correo electrónico ingresado sea único y no exista previamente en el registro."
+        },
+        {
+          "id": "REG-RF07-03",
+          "texto": "El sistema deberá rechazar contraseñas que tengan menos de 8 caracteres."
+        },
+        {
+          "id": "REG-RF07-04",
+          "texto": "El sistema deberá mostrar un mensaje de confirmación cuando el registro se realice de forma correcta."
+        }
+      ],
+      "datos_prueba": [
+        "Longitud de contraseña: 7 caracteres (inválido)",
+        "Longitud de contraseña: 8 caracteres (mínimo permitido)",
+        "Longitud de contraseña: 9 caracteres (válido)",
+        "Correo electrónico no existente previamente en el sistema (válido)",
+        "Correo electrónico ya registrado en el sistema (inválido)"
+      ],
+      "ambiguedades": [
+        "No se especifica el texto exacto ni el diseño del mensaje de confirmación de registro exitoso.",
+        "No se especifican los mensajes exactos de error al ingresar un correo duplicado o una contraseña con menos de 8 caracteres.",
+        "No se definen las validaciones de formato o sintaxis del correo electrónico.",
+        "No se detallan criterios adicionales de complejidad de la contraseña (como inclusión de números, mayúsculas, símbolos o longitud máxima)."
+      ]
+    }
+  },
+  {
+    "ejecucion": 3,
+    "requisito": "RF07",
+    "prompt": "qa_analizar",
+    "version": 2,
+    "modelo": "gemini-3.5-flash",
+    "fecha_utc": "2026-11-05T09:57:43.553124+00:00",
+    "ok": false,
+    "error_proveedor": "LLMError",
+    "detalle": "HTTP 429: {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-a"
+  }
+]

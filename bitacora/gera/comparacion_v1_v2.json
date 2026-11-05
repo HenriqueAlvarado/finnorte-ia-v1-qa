@@ -1,0 +1,43 @@
+{
+  "requisito": "RF07",
+  "modelo": "gemini-3.5-flash",
+  "temperatura": 0.0,
+  "version_1": {
+    "solicitudes": 3,
+    "salidas_validas": 3,
+    "errores_proveedor": [],
+    "intentos_exitosos": [
+      1,
+      1,
+      1
+    ],
+    "reglas_por_salida": [
+      4,
+      4,
+      4
+    ]
+  },
+  "version_2": {
+    "solicitudes": 3,
+    "salidas_validas": 1,
+    "errores_proveedor": [
+      {
+        "ejecucion": 1,
+        "tipo": "LLMError",
+        "detalle": "HTTP 503: {\n  \"error\": {\n    \"code\": 503,\n    \"message\": \"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\",\n    \"status\": \"UNAVAILABLE\"\n  }\n}\n"
+      },
+      {
+        "ejecucion": 3,
+        "tipo": "LLMError",
+        "detalle": "HTTP 429: {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-a"
+      }
+    ],
+    "intentos_exitosos": [
+      1
+    ],
+    "reglas_por_salida": [
+      4
+    ]
+  },
+  "observacion": "La version 2 mejora las instrucciones sobre limites, pero dos solicitudes fallaron por HTTP 503 y HTTP 429. No es posible concluir superioridad estadistica."
+}
