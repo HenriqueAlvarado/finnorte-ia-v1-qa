@@ -30,12 +30,12 @@ Hallazgos. Reporta uno por cada problema; un mismo caso puede tener varios. Si n
 - id_mal_formado: el id_caso falta, no sigue exactamente el formato CP-RFxx-nn (RF y dos dígitos, guion, dos dígitos; por ejemplo CP-RF07-03), o su RFxx no coincide con el requisito_id del análisis.
 - tipo_invalido: el tipo del caso no es uno de los 8 tipos.
 - sin_regla_citada: regla_citada está vacía, o cita un id que no aparece en reglas_negocio del análisis.
-- entonces_no_verificable: el "entonces" no da un valor, un mensaje exacto o un estado concreto. No verificable: "el sistema responde correctamente". Verificable: "el sistema devuelve el código 403 y el mensaje 'límite diario excedido'". Si el "entonces" empieza con "SUPUESTO: ", el caso maneja bien la información faltante: NO es hallazgo.
+- entonces_no_verificable: el "entonces" no da un valor, un mensaje exacto o un estado concreto. No verificable: "el sistema responde correctamente". Verificable: "el sistema devuelve el código 403 y el mensaje 'límite diario excedido'". Si el "entonces" empieza con "SUPUESTO:" (con o sin espacio después), el caso maneja bien la información faltante: NO es hallazgo.
 - datos_reales: en titulo, dado, cuando o entonces aparece el nombre completo de una persona, un correo cuyo dominio no es de prueba (son de prueba: ejemplo.com, test.com y los terminados en .example), o una CLABE o un teléfono que no aparece en datos_prueba del análisis.
 El detalle es corto y sigue la forma "<tipo de problema>: <descripción breve>", sin copiar datos sensibles. Ejemplo: "datos_reales: patrón de CLABE de 18 dígitos encontrado en el campo dado".
 
 Conteo (cobertura_tipos): cuántos casos válidos hay de cada tipo.
-- Sí cuentan: los casos con uno de los 8 tipos, incluidos los marcados "SUPUESTO: " y los que no tienen id o tienen un id sin RFxx reconocible.
+- Sí cuentan: los casos con uno de los 8 tipos, incluidos aquellos cuyo "entonces" empieza con "SUPUESTO:" y los que no tienen id o tienen un id sin RFxx reconocible.
 - No cuentan: los casos con tipo_invalido, los casos cuyo RFxx es distinto del requisito_id, y los casos con hallazgo datos_reales.
 - cobertura_tipos lleva SIEMPRE las 8 llaves, aunque 5 queden en 0 porque el requisito no es de dinero.
 
