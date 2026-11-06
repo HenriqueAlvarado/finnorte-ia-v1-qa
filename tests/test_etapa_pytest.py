@@ -63,7 +63,7 @@ def test_trampa_qa10():
 
 
 def test_esquema_y_prompts():
-    for v in (1, 2):
+    for v in (1, 2, 3):
         p = prompts.cargar("qa_pytest", v)
         assert p.variables == {"casos"} and p.salida_json
     esquema = prompts.cargar("qa_pytest").esquema
@@ -87,6 +87,32 @@ def test_imports_fuera_de_la_biblioteca_estandar():
     assert any("['finnorte', 'requests']" in e for e in errores)
     # pytest, decimal y otros módulos estándar sí se permiten
     assert pytest_compila_y_cubre({"codigo_pytest": "import json, datetime\n" + CODIGO_OK}, PREVIAS) == []
+
+
+def test_assert_sobre_valores_locales_no_prueba_al_sistema():
+    codigo = CODIGO_OK.replace('assert sistema.transferir(Decimal("100.00")) == "aceptada"',
+                               'monto = Decimal("100.00")\n    assert monto == Decimal("100.00")')
+    errores = pytest_compila_y_cubre({"codigo_pytest": codigo}, PREVIAS)
+    assert any("test_cp_rf12_01: el assert no revisa ningún resultado de sistema" in e for e in errores)
+    # pytest.raises sin llamar a sistema tampoco cuenta
+    codigo = CODIGO_OK.replace('sistema.transferir(Decimal("0"))', 'Decimal("x")')
+    assert any("test_cp_rf12_02: el assert no revisa" in e for e in pytest_compila_y_cubre({"codigo_pytest": codigo}, PREVIAS))
+
+
+def test_resultado_guardado_en_variable_si_cuenta():
+    codigo = CODIGO_OK.replace('assert sistema.transferir(Decimal("100.00")) == "aceptada"',
+                               'resultado = sistema.ejecutar("transferir", monto=Decimal("100.00"))\n    assert resultado["estado"] == "aceptada"')
+    assert pytest_compila_y_cubre({"codigo_pytest": codigo}, PREVIAS) == []
+
+
+def test_datos_con_forma_de_pii():
+    for dato, forma in (('"nuevo.cliente@ejemplo.com"', "correo"), ('"646180157000000004"', "18 dígitos"),
+                        ('"55 1234 5678"', "teléfono")):
+        codigo = CODIGO_OK.replace('Decimal("100.00")', f'Decimal("100.00"), dato={dato}')
+        errores = pytest_compila_y_cubre({"codigo_pytest": codigo}, PREVIAS)
+        assert any("forma de PII" in e and forma in e for e in errores), dato
+    codigo = CODIGO_OK.replace('Decimal("100.00")', 'Decimal("100.00"), correo="<CORREO_SINTETICO_1>"')
+    assert pytest_compila_y_cubre({"codigo_pytest": codigo}, PREVIAS) == []
 
 
 def test_nombre_archivo_corresponde_al_requisito():

@@ -3,6 +3,7 @@
     python guia/a2_etapa4_pytest.py            # mide la v1 y la v2 (usa los casos congelados si existen)
     python guia/a2_etapa4_pytest.py --nuevos   # vuelve a generar los casos con las etapas 1 y 2
     python guia/a2_etapa4_pytest.py --sin-contexto
+    python guia/a2_etapa4_pytest.py --versiones 2,3 --salida medicion_v2_v3   # v2 contra v3, en otra carpeta
 
 Paso 1 · Corre analizar → casos (etapas 1 y 2 del equipo, sin cambiarlas) para 3 requisitos y
          congela la salida en bitacora/luis/a2_casos_entrada.json.
@@ -31,8 +32,14 @@ from finnorte.etapa_casos import casos_cubren_qa08
 from finnorte.etapa_pytest import nombre_test, pytest_compila_y_cubre
 from finnorte.pipeline import Etapa, Pipeline, validar_esquema
 
+def _arg(nombre: str, defecto: str) -> str:
+    return sys.argv[sys.argv.index(nombre) + 1] if nombre in sys.argv[:-1] else defecto
+
+
 SALIDA = RAIZ / "bitacora" / "luis"
-CASOS_CONGELADOS = SALIDA / "a2_casos_entrada.json"
+CASOS_CONGELADOS = SALIDA / "a2_casos_entrada.json"   # siempre los mismos casos, para cualquier par de versiones
+VERSIONES = tuple(int(v) for v in _arg("--versiones", "1,2").split(","))   # p. ej. --versiones 2,3
+DESTINO = SALIDA / _arg("--salida", "")                # p. ej. --salida medicion_v2_v3 (no pisa la de v1/v2)
 ENTRADAS = {
     "RF07": "datos/v1-qa/requisitos/RF07-registro.md",
     "RF12": "datos/v1-qa/requisitos/RF12-transferencia.md",
@@ -107,7 +114,7 @@ def correr_etapa4(version: int, casos: dict) -> dict:
     tests = sorted(set(re.findall(r"def (test_\w+)\s*\(", codigo)))
     esperados = sorted(nombre_test(c["id_caso"]) for c in casos.get("casos", []))
     if codigo:  # evidencia: el archivo que generó el modelo (último intento)
-        destino = SALIDA / "generados" / f"v{version}" / f"{next(iter(_rf_de(casos)), 'rf')}_rep{_rep_actual}.py"
+        destino = DESTINO / "generados" / f"v{version}" / f"{next(iter(_rf_de(casos)), 'rf')}_rep{_rep_actual}.py"
         destino.parent.mkdir(parents=True, exist_ok=True)
         destino.write_text(codigo, encoding="utf-8")
     return {"prompt": p.nombre, "valida": not errores, "intentos": intento,
@@ -144,7 +151,8 @@ def escribir_matriz(version: int, filas: list[dict]) -> Path:
     lineas += ["", f"Consistencia (RF12 × {len(rf12)}): "
                + str([(f["valida_primer_intento"], f["tests_esperados_presentes"], f["nombre_archivo"]) for f in rf12])
                + "  ← (válida al 1.er intento, casos con test, nombre_archivo)"]
-    ruta = SALIDA / f"a2_matriz_pytest_v{version}.md"
+    DESTINO.mkdir(parents=True, exist_ok=True)
+    ruta = DESTINO / f"a2_matriz_pytest_v{version}.md"
     ruta.write_text("\n".join(lineas) + "\n", encoding="utf-8")
     return ruta
 
@@ -170,7 +178,7 @@ def main() -> None:
         print(f"  {rf}: {'ok' if e.get('ok') else 'falló'} · {n} casos {e.get('error_proveedor', '')[:80]}")
 
     reporte = {"modelo": modelo(), "ts": time.strftime("%Y-%m-%dT%H:%M:%S"), "versiones": {}}
-    for version in (1, 2):
+    for version in VERSIONES:
         filas = []
         for rf, e in entradas.items():
             if not e.get("ok"):
@@ -185,8 +193,9 @@ def main() -> None:
         ruta = escribir_matriz(version, filas)
         reporte["versiones"][f"v{version}"] = {"resumen": resumen(filas), "filas": filas}
         print(f"\nv{version}: {resumen(filas)}  →  {ruta.relative_to(RAIZ)}")
-    (SALIDA / "a2_pytest_v1_v2.json").write_text(json.dumps(reporte, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"\nDetalle: {(SALIDA / 'a2_pytest_v1_v2.json').relative_to(RAIZ)}")
+    detalle = DESTINO / ("a2_pytest_" + "_".join(f"v{v}" for v in VERSIONES) + ".json")
+    detalle.write_text(json.dumps(reporte, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"\nDetalle: {detalle.relative_to(RAIZ)}")
 
 
 if __name__ == "__main__":

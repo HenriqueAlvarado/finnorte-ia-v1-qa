@@ -1,0 +1,223 @@
+{
+  "modelo": "gemini / gemini-3.1-flash-lite",
+  "ts": "2026-11-05T20:57:50",
+  "versiones": {
+    "v2": {
+      "resumen": {
+        "ejecuciones": 5,
+        "errores_proveedor": 0,
+        "validas_primer_intento": 0,
+        "validas_final": 0,
+        "reglas_disparadas_primer_intento": 39
+      },
+      "filas": [
+        {
+          "entrada": "RF07",
+          "rep": 1,
+          "prompt": "qa_pytest.v2",
+          "valida": false,
+          "intentos": 2,
+          "valida_primer_intento": false,
+          "errores_primer_intento": [
+            "test_cp_rf07_01: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)",
+            "test_cp_rf07_02: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)",
+            "test_cp_rf07_03: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)",
+            "test_cp_rf07_04: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)",
+            "test_cp_rf07_05: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)",
+            "codigo_pytest trae datos con forma de PII (correo): usa marcadores como <CORREO_SINTETICO_1> o <CLABE_VALIDA_1>"
+          ],
+          "errores_final": [
+            "codigo_pytest trae datos con forma de PII (correo): usa marcadores como <CORREO_SINTETICO_1> o <CLABE_VALIDA_1>"
+          ],
+          "nombre_archivo": "test_rf07.py",
+          "tests": 5,
+          "casos": 5,
+          "tests_esperados_presentes": 5
+        },
+        {
+          "entrada": "RF12",
+          "rep": 1,
+          "prompt": "qa_pytest.v2",
+          "valida": false,
+          "intentos": 2,
+          "valida_primer_intento": false,
+          "errores_primer_intento": [
+            "test_cp_rf12_01: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)",
+            "test_cp_rf12_02: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)",
+            "test_cp_rf12_03: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)",
+            "test_cp_rf12_04: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)",
+            "test_cp_rf12_05: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)",
+            "test_cp_rf12_06: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)",
+            "test_cp_rf12_07: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)",
+            "test_cp_rf12_08: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)"
+          ],
+          "errores_final": [
+            "codigo_pytest trae datos con forma de PII (número de 18 dígitos (CLABE)): usa marcadores como <CORREO_SINTETICO_1> o <CLABE_VALIDA_1>"
+          ],
+          "nombre_archivo": "test_rf12.py",
+          "tests": 8,
+          "casos": 8,
+          "tests_esperados_presentes": 8
+        },
+        {
+          "entrada": "RF12",
+          "rep": 2,
+          "prompt": "qa_pytest.v2",
+          "valida": false,
+          "intentos": 2,
+          "valida_primer_intento": false,
+          "errores_primer_intento": [
+            "test_cp_rf12_01: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)",
+            "test_cp_rf12_02: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)",
+            "test_cp_rf12_03: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)",
+            "test_cp_rf12_04: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)",
+            "test_cp_rf12_05: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)",
+            "test_cp_rf12_06: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)",
+            "test_cp_rf12_07: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)",
+            "test_cp_rf12_08: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)"
+          ],
+          "errores_final": [
+            "codigo_pytest trae datos con forma de PII (número de 18 dígitos (CLABE)): usa marcadores como <CORREO_SINTETICO_1> o <CLABE_VALIDA_1>"
+          ],
+          "nombre_archivo": "test_rf12.py",
+          "tests": 8,
+          "casos": 8,
+          "tests_esperados_presentes": 8
+        },
+        {
+          "entrada": "RF12",
+          "rep": 3,
+          "prompt": "qa_pytest.v2",
+          "valida": false,
+          "intentos": 2,
+          "valida_primer_intento": false,
+          "errores_primer_intento": [
+            "test_cp_rf12_01: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)",
+            "test_cp_rf12_02: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)",
+            "test_cp_rf12_03: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)",
+            "test_cp_rf12_04: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)",
+            "test_cp_rf12_05: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)",
+            "test_cp_rf12_06: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)",
+            "test_cp_rf12_07: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)",
+            "test_cp_rf12_08: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)"
+          ],
+          "errores_final": [
+            "codigo_pytest trae datos con forma de PII (número de 18 dígitos (CLABE)): usa marcadores como <CORREO_SINTETICO_1> o <CLABE_VALIDA_1>"
+          ],
+          "nombre_archivo": "test_rf12.py",
+          "tests": 8,
+          "casos": 8,
+          "tests_esperados_presentes": 8
+        },
+        {
+          "entrada": "RF15",
+          "rep": 1,
+          "prompt": "qa_pytest.v2",
+          "valida": false,
+          "intentos": 2,
+          "valida_primer_intento": false,
+          "errores_primer_intento": [
+            "test_cp_rf15_01: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)",
+            "test_cp_rf15_02: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)",
+            "test_cp_rf15_03: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)",
+            "test_cp_rf15_04: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)",
+            "test_cp_rf15_05: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)",
+            "test_cp_rf15_06: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)",
+            "test_cp_rf15_07: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)",
+            "test_cp_rf15_08: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)",
+            "test_cp_rf15_09: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)"
+          ],
+          "errores_final": [
+            "test_cp_rf15_05: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)",
+            "test_cp_rf15_06: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)"
+          ],
+          "nombre_archivo": "test_rf15.py",
+          "tests": 9,
+          "casos": 9,
+          "tests_esperados_presentes": 9
+        }
+      ]
+    },
+    "v3": {
+      "resumen": {
+        "ejecuciones": 5,
+        "errores_proveedor": 0,
+        "validas_primer_intento": 5,
+        "validas_final": 5,
+        "reglas_disparadas_primer_intento": 0
+      },
+      "filas": [
+        {
+          "entrada": "RF07",
+          "rep": 1,
+          "prompt": "qa_pytest.v3",
+          "valida": true,
+          "intentos": 1,
+          "valida_primer_intento": true,
+          "errores_primer_intento": [],
+          "errores_final": [],
+          "nombre_archivo": "test_rf07.py",
+          "tests": 5,
+          "casos": 5,
+          "tests_esperados_presentes": 5
+        },
+        {
+          "entrada": "RF12",
+          "rep": 1,
+          "prompt": "qa_pytest.v3",
+          "valida": true,
+          "intentos": 1,
+          "valida_primer_intento": true,
+          "errores_primer_intento": [],
+          "errores_final": [],
+          "nombre_archivo": "test_rf12.py",
+          "tests": 8,
+          "casos": 8,
+          "tests_esperados_presentes": 8
+        },
+        {
+          "entrada": "RF12",
+          "rep": 2,
+          "prompt": "qa_pytest.v3",
+          "valida": true,
+          "intentos": 1,
+          "valida_primer_intento": true,
+          "errores_primer_intento": [],
+          "errores_final": [],
+          "nombre_archivo": "test_rf12.py",
+          "tests": 8,
+          "casos": 8,
+          "tests_esperados_presentes": 8
+        },
+        {
+          "entrada": "RF12",
+          "rep": 3,
+          "prompt": "qa_pytest.v3",
+          "valida": true,
+          "intentos": 1,
+          "valida_primer_intento": true,
+          "errores_primer_intento": [],
+          "errores_final": [],
+          "nombre_archivo": "test_rf12.py",
+          "tests": 8,
+          "casos": 8,
+          "tests_esperados_presentes": 8
+        },
+        {
+          "entrada": "RF15",
+          "rep": 1,
+          "prompt": "qa_pytest.v3",
+          "valida": true,
+          "intentos": 1,
+          "valida_primer_intento": true,
+          "errores_primer_intento": [],
+          "errores_final": [],
+          "nombre_archivo": "test_rf15.py",
+          "tests": 9,
+          "casos": 9,
+          "tests_esperados_presentes": 9
+        }
+      ]
+    }
+  }
+}

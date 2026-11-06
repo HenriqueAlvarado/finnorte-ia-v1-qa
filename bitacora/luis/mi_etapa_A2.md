@@ -8,7 +8,7 @@
 | Campo | Valor |
 |---|---|
 | Nombre en `FLUJO` | `pytest` |
-| Prompt | `prompts/qa_pytest.v1.md` y `prompts/qa_pytest.v2.md` |
+| Prompt | `prompts/qa_pytest.v1.md`, `v2.md` y `v3.md` (el flujo usa la más reciente) |
 | Recibe (`usa=`) | `["casos"]`: la lista de la etapa 2 (`id_caso`, `titulo`, `tipo`, `dado`, `cuando`, `entonces`, `regla_citada`) |
 | Entrega (esquema) | `nombre_archivo` (`^test_[a-z0-9_]+\.py$`) y `codigo_pytest`, con `additionalProperties: false` |
 | Conexión | `Etapa("pytest", "qa_pytest", usa=["casos"], validar=pytest_compila_y_cubre)` |
@@ -22,9 +22,12 @@
   - **reglas explícitas:** "Nombre: test_ + id_caso en minúsculas… (CP-RF12-03 → test_cp_rf12_03)"; un docstring con `id_caso`, `@RF12`, tipo y `regla_citada`; al menos un assert.
   - **qué hacer si falta información:** "Si el «entonces» contiene SUPUESTO, conserva la palabra SUPUESTO en el docstring; no inventes el valor".
   - **formato JSON:** el objeto exacto de salida, con un ejemplo.
+- **v3** agrega dos cosas que la medición de la v2 mostró que faltaban:
+  - una interfaz fija para probar al sistema: "resultado = sistema.ejecutar("accion", **datos)… haz al menos un assert sobre lo que regresó";
+  - datos sintéticos como marcadores: "<CORREO_SINTETICO_1>", "<CLABE_VALIDA_1>"… "No escribas correos con @, números de 18 dígitos ni teléfonos de 10 dígitos".
 
 ## 3. Mi validación en código (`pytest_compila_y_cubre`, `src/finnorte/etapa_pytest.py`)
-Revisa 7 reglas:
+Revisa 9 reglas (la 8 y la 9 se agregaron junto con la v3):
 1. El código compila (`ast.parse`).
 2. Hay un `test_cp_rfxx_nn` por cada `id_caso`.
 3. Cada test tiene un `assert` o un `pytest.raises`.
@@ -32,6 +35,8 @@ Revisa 7 reglas:
 5. No aparecen los datos de qa-10, en ningún formato.
 6. Solo importa pytest y la biblioteca estándar.
 7. `nombre_archivo` corresponde al RF de los casos.
+8. Cada test prueba al sistema: su assert (o su `pytest.raises`) revisa lo que regresó `sistema.<accion>(...)`.
+9. Sin datos con forma de PII (correo, 18 dígitos, teléfono de 10 dígitos): van como marcadores.
 
 **Por qué es código y no prompt:** el modelo no puede comprobar que su código compila ni contar sus funciones con certeza. `ast` lo hace de forma determinista y sin costo, y sus errores vuelven al modelo en el reintento.
 
@@ -81,9 +86,40 @@ Las dos corridas anteriores dieron lo mismo: la v1 con 0/5 al primer intento (y 
 
 **Los archivos de la v2 corren:** los 38 tests de los 5 archivos (`bitacora/luis/generados/v2/`) se recolectan con pytest y salen *skipped*, como pide el prompt mientras no exista el sistema.
 
-**Limitaciones que encontré (siguiente mejora):**
-- **Ningún test usa a `sistema`** (0 de 38): los asserts comparan valores locales, así que todavía no pueden fallar. Arreglarlo requiere una v3 y una regla 8 en código: cada assert debe revisar un resultado obtenido de `sistema`.
-- **El archivo de RF07 trae correos sintéticos**, y el detector de PII del equipo los marca como fuga. Hay que acordar marcadores como `<CORREO_SINTETICO_1>` (ver el PR #10).
+**Dos limitaciones que dejó la v2 (por eso hice la v3):**
+- **Ningún test usa a `sistema`** (0 de 38): los asserts comparan valores locales, por ejemplo `assert monto == Decimal("100.00")`, así que no pueden fallar.
+- **El archivo de RF07 trae correos sintéticos**, y el detector de PII del equipo los cuenta como fuga.
+
+## 6b. Mejora v3 medida
+**`cambios:` de la v3:** "la medición de v2… mostró que 0 de 38 tests llamaban a sistema… y que el archivo de RF07 traía correos sintéticos… v3 fija la interfaz sistema.ejecutar(accion, **datos), exige que cada assert revise lo que regresa y pide los datos sintéticos como marcadores".
+
+**En código:** reglas 8 y 9 de `pytest_compila_y_cubre`, con 3 pruebas nuevas (13 en total).
+
+**Antes y después.** Los mismos casos congelados, las 9 reglas activas y 5 corridas por versión (`bitacora/luis/medicion_v2_v3/`):
+
+| Métrica | v2 | v3 |
+|---|---|---|
+| Válidas al 1.er intento | **0/5** | **5/5** |
+| Válidas tras el reintento | 0/5 | 5/5 |
+| Errores de validación (1.er intento) | 39 (38 de regla 8 y 1 de regla 9) | 0 |
+| Tests que llaman a `sistema` | 0/38 | **38/38** |
+| Archivos con datos con forma de PII | 1/5 | 0/5 |
+| Consistencia RF12 × 3 | ✗ ✗ ✗ | ✓ ✓ ✓ |
+| Llamadas al modelo | 10 | 5 |
+| Costo total (US$) | 0.0374 | 0.0208 |
+
+Ejemplo de un test de la v3 (`generados/v3/rf12_rep1.py`, con el docstring en una línea y el comentario «Dado» omitido):
+```python
+def test_cp_rf12_04(sistema):
+    """id_caso: CP-RF12-04 · @RF12 · monto_cero · REG-RF12-02"""
+    # Cuando se intenta transferir 0.00 MXN
+    resultado = sistema.ejecutar("transferir", monto=Decimal("0.00"), clabe="<CLABE_VALIDA_1>")
+    # Entonces se rechaza la transferencia
+    assert resultado["estado"] == "rechazada"
+```
+Los 38 tests de la v3 se recolectan con pytest (38 skipped) y quedan listos para conectarse cuando exista `sistema.ejecutar`.
+
+**Nota de método:** la comparación v1 contra v2 se midió con las reglas 1 a 7. La de v2 contra v3 usa las reglas 1 a 9, porque las reglas 8 y 9 nacieron de lo que mostró la medición de la v2.
 
 ## 7. Mis commits
 - PR: https://github.com/HenriqueAlvarado/finnorte-ia-v1-qa/pull/11
