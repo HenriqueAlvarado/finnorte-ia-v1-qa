@@ -15,3 +15,32 @@ def test_calificar_caso_y_contrato():
 def test_bootstrap_diferencia():
     r = evaluacion.bootstrap_diferencia([False] * 10 + [True] * 10, [True] * 18 + [False] * 2, n=500)
     assert r["diferencia"] == 0.4 and r["ic95"][0] > 0
+
+
+def test_calcular_metricas_al_juntar_corridas_es_igual_que_una_sola():
+    """--agregar de av1_configuraciones: 1 + 1 repeticiones dan las mismas métricas que 2 de una vez."""
+    from finnorte import evaluacion
+
+    casos = [{"id": "c1", "tipo": "normal", "entrada": {"requisito": "x"}, "esperado": {"contiene": ["ok"]}},
+             {"id": "c2", "tipo": "fuera", "entrada": {"requisito": "y"}, "esperado": {"debe_abstenerse": True}}]
+
+    def hacer_sistema():
+        llamadas = {"n": 0}
+
+        def sistema(entrada):
+            llamadas["n"] += 1
+            bien = llamadas["n"] % 3 != 0            # falla 1 de cada 3: deja casos inconsistentes
+            return {"respuesta": "ok" if bien else "", "fuentes": [], "abstuvo": entrada["requisito"] == "y" and bien,
+                    "latencia_ms": 100.0 * llamadas["n"], "costo_usd": 0.001 * llamadas["n"]}
+        return sistema
+
+    juntas = evaluacion.evaluar(hacer_sistema(), casos, repeticiones=2)
+    # Las mismas 4 respuestas (mismo orden de llamadas: c1, c1, c2, c2) repartidas en dos corridas de 1 repetición.
+    s = hacer_sistema()
+    corrida1, corrida2 = [], []
+    for caso in casos:
+        for corrida in (corrida1, corrida2):
+            corrida.append(evaluacion.calificar_caso(caso, s(caso["entrada"])).__dict__)
+    combinadas = evaluacion.calcular_metricas(corrida1 + corrida2, casos=len(casos), errores_sistema=0)
+    assert combinadas == juntas["metricas"]
+    assert combinadas["consistencia"] < 1        # el doble sí produjo casos inconsistentes

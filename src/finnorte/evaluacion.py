@@ -82,7 +82,6 @@ def calificar_caso(caso: dict, salida: dict) -> ResultadoCaso:
 def evaluar(sistema: Callable[[dict], dict], casos: list[dict], repeticiones: int = 1, etiqueta: str = "eval") -> dict:
     """Corre cada caso `repeticiones` veces y devuelve métricas agregadas + detalle por caso."""
     detalle: list[ResultadoCaso] = []
-    por_caso: dict[str, list[bool]] = {}
     errores_sistema: list[str] = []
     for caso in casos:
         for _ in range(repeticiones):
@@ -93,28 +92,39 @@ def evaluar(sistema: Callable[[dict], dict], casos: list[dict], repeticiones: in
                 errores_sistema.append(f"{caso['id']}: {type(e).__name__}: {e}")
             rc = calificar_caso(caso, salida)
             detalle.append(rc)
-            por_caso.setdefault(caso["id"], []).append(rc.acierto)
-    n = len(detalle) or 1
-    lat = sorted(r.latencia_ms for r in detalle)
-    metricas = {
-        "casos": len(casos),
-        "ejecuciones": len(detalle),
-        "exactitud": round(sum(r.acierto for r in detalle) / n, 4),
-        "citas_correctas": round(sum(r.citas_ok for r in detalle) / n, 4),
-        "alucinacion": round(sum(r.alucinacion for r in detalle) / n, 4),
-        "fuga_pii": round(sum(r.fuga for r in detalle) / n, 4),
-        "abstencion_correcta": round(sum(r.abstencion_ok for r in detalle) / n, 4),
-        "consistencia": round(sum(len(set(v)) == 1 for v in por_caso.values()) / max(1, len(por_caso)), 4),
-        "latencia_p95_ms": round(lat[min(len(lat) - 1, int(0.95 * len(lat)))], 1) if lat else 0.0,
-        "costo_promedio_usd": round(statistics.mean(r.costo_usd for r in detalle), 6) if detalle else 0.0,
-        "errores_sistema": len(errores_sistema),
-    }
-    por_tipo: dict[str, list[bool]] = {}
-    for r in detalle:
-        por_tipo.setdefault(r.tipo, []).append(r.acierto)
-    metricas["exactitud_por_tipo"] = {t: round(sum(v) / len(v), 4) for t, v in por_tipo.items()}
+    metricas = calcular_metricas([r.__dict__ for r in detalle], casos=len(casos), errores_sistema=len(errores_sistema))
     trazas.registrar("evaluacion", etiqueta=etiqueta, **{k: v for k, v in metricas.items()})
     return {"metricas": metricas, "detalle": [r.__dict__ for r in detalle], "errores_sistema": errores_sistema[:20]}
+
+
+def calcular_metricas(detalle: list[dict], casos: int, errores_sistema: int) -> dict:
+    """Métricas agregadas a partir del detalle por ejecución (dicts de ResultadoCaso).
+
+    Separada de `evaluar` para poder recalcularlas al juntar repeticiones de corridas distintas
+    (por ejemplo, `guia/av1_configuraciones.py --agregar`)."""
+    n = len(detalle) or 1
+    por_caso: dict[str, list[bool]] = {}
+    for d in detalle:
+        por_caso.setdefault(d["id"], []).append(d["acierto"])
+    lat = sorted(d["latencia_ms"] for d in detalle)
+    metricas = {
+        "casos": casos,
+        "ejecuciones": len(detalle),
+        "exactitud": round(sum(d["acierto"] for d in detalle) / n, 4),
+        "citas_correctas": round(sum(d["citas_ok"] for d in detalle) / n, 4),
+        "alucinacion": round(sum(d["alucinacion"] for d in detalle) / n, 4),
+        "fuga_pii": round(sum(d["fuga"] for d in detalle) / n, 4),
+        "abstencion_correcta": round(sum(d["abstencion_ok"] for d in detalle) / n, 4),
+        "consistencia": round(sum(len(set(v)) == 1 for v in por_caso.values()) / max(1, len(por_caso)), 4),
+        "latencia_p95_ms": round(lat[min(len(lat) - 1, int(0.95 * len(lat)))], 1) if lat else 0.0,
+        "costo_promedio_usd": round(statistics.mean(d["costo_usd"] for d in detalle), 6) if detalle else 0.0,
+        "errores_sistema": errores_sistema,
+    }
+    por_tipo: dict[str, list[bool]] = {}
+    for d in detalle:
+        por_tipo.setdefault(d["tipo"], []).append(d["acierto"])
+    metricas["exactitud_por_tipo"] = {t: round(sum(v) / len(v), 4) for t, v in por_tipo.items()}
+    return metricas
 
 
 # ───────────────────────────── contrato de calidad ─────────────────────────────
