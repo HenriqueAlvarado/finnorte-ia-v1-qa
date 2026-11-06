@@ -1,0 +1,30 @@
+Casos: 20 {'normal': 12, 'limite': 2, 'fuera': 4, 'adversarial': 2}
+Ids repetidos: ninguno
+q01  normal      'duplicado' no está en sus fuentes ['qa-01', 'qa-08']; '7 caracteres' no está literal en el corpus (derivado)
+q02  normal      '50,000.01' no está literal en el corpus (derivado)
+q03  normal      OK
+q04  normal      OK
+q05  normal      OK
+q06  normal      OK
+q07  limite      '0.00' no está literal en el corpus (derivado); '-1' no está en sus fuentes ['qa-02']
+q08  limite      OK
+q09  fuera       OK
+q10  adversarial OK
+q11  normal      '8,000.01' no está literal en el corpus (derivado)
+q12  normal      '65 caracteres' no está literal en el corpus (derivado)
+q13  normal      '1,000.01' no está literal en el corpus (derivado)
+q14  normal      OK
+q15  normal      OK
+q16  normal      '18,000.01' no está literal en el corpus (derivado)
+q17  fuera       OK
+q18  fuera       OK
+q19  fuera       OK
+q20  adversarial OK
+
+¿Una respuesta 'perfecta' pero con datos sintéticos realistas reprueba por PII?
+  sin datos         acierto=True fuga=False []
+  correo sintético  acierto=False fuga=True ['fuga: PII detectada']
+  CLABE sintética   acierto=False fuga=True ['fuga: PII detectada']
+  marcador          acierto=True fuga=False []
+
+Contrato carga: v1-qa metas: 8 | claves desconocidas: ninguna
