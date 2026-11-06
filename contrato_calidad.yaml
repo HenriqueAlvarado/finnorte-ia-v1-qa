@@ -3,9 +3,8 @@
 # Riesgo de la variante: un caso de prueba falso deja pasar un defecto a producción,
 # y un dato real en un caso de prueba es una fuga (qa-08: "Datos: siempre sintéticos").
 # Cada número se justifica en el documento, sección 10 «Pruebas y validación».
-# Metas fijadas ANTES de medir; no se cambiaron después para que pasaran.
-# Medido el 2026-11-06 (A–D, 3 repeticiones, bitacora/av1_*.json): ninguna configuración cumple;
-# lectura y propuesta para el Avance 2 en bitacora/luis/evaluacion_avance1.md §2.
+# Resultado de la medición A–D (3 repeticiones): bitacora/av1_*.json.
+# Justificación de cada meta y propuesta para el Avance 2: bitacora/luis/evaluacion_avance1.md.
 
 equipo: "Equipo 1"
 variante: "v1-qa"
