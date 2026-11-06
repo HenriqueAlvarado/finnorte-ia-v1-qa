@@ -18,6 +18,7 @@ Construye esto por incrementos:
 """
 from __future__ import annotations
 
+import re
 import time
 from pathlib import Path
 
@@ -86,26 +87,73 @@ def armar_salida(t0: float, respuesta: str, fuentes: list[str], abstuvo: bool,
             "latencia_ms": round((time.perf_counter() - t0) * 1000, 1)}
 
 
+def fuentes_citadas(salidas: dict) -> list[str]:
+    """Las fuentes que citó el modelo: el campo opcional «fuente» (qa-xx) de cada caso, sin repetir."""
+    casos = (salidas.get("casos") or {}).get("casos") or []
+    return list(dict.fromkeys(str(c["fuente"]) for c in casos if isinstance(c, dict) and c.get("fuente")))
+
+
+def respuesta_texto(salidas: dict, etapas: list) -> str:
+    """El artefacto en texto: los casos en Gherkin (con la etiqueta @RFxx que pide qa-08), la revisión y el archivo pytest."""
+    analizar = salidas.get("analizar") or {}
+    casos = (salidas.get("casos") or {}).get("casos") or []
+    revisar = salidas.get("revisar") or {}
+    pytest_ = salidas.get("pytest") or {}
+    lineas = []
+    fallida = next((e for e in etapas if not e.ok), None)
+    if fallida:
+        lineas += [f"⚠ El flujo se detuvo en la etapa «{fallida.nombre}»: su salida no pasó la validación.", ""]
+    if analizar:
+        dinero = "sí" if analizar.get("es_operacion_dinero") else "no"
+        lineas += [f"Requisito {analizar.get('requisito_id', '?')} · operación de dinero: {dinero}", ""]
+    for c in casos:
+        rf = re.search(r"RF\d+", str(c.get("id_caso", ""))) or re.search(r"RF\d+", str(analizar.get("requisito_id", "")))
+        lineas += [f"@{rf.group(0)}" if rf else "@RF??",
+                   f"Escenario: {c.get('id_caso', 'SIN-ID')} · {c.get('titulo', '')} [{c.get('tipo', '?')}]",
+                   f"  Dado {c.get('dado', '')}",
+                   f"  Cuando {c.get('cuando', '')}",
+                   f"  Entonces {c.get('entonces', '')}",
+                   f"  # regla: {c.get('regla_citada', '—')}" + (f" · fuente: {c['fuente']}" if c.get("fuente") else ""),
+                   ""]
+    if revisar:
+        faltan = ", ".join(f["tipo_faltante"] for f in revisar.get("casos_faltantes", [])) or "ninguno"
+        hallazgos = "; ".join(f"{h['caso_id']}: {h['tipo']}" for h in revisar.get("hallazgos", [])) or "ninguno"
+        lineas += [f"Revisión contra qa-08: {'cumple' if revisar.get('cumple_qa08') else 'NO cumple'} · "
+                   f"tipos faltantes: {faltan} · hallazgos: {hallazgos}"]
+    if pytest_:
+        lineas += [f"Pruebas generadas: {pytest_.get('nombre_archivo', '?')} "
+                   f"({str(pytest_.get('codigo_pytest', '')).count('def test_')} tests)"]
+    return "\n".join(lineas).strip()
+
+
 def sistema(entrada: dict, config: dict | None = None) -> dict:
     """El motor de tu variante. Sigue los 6 pasos; el caso guía (asistente.py) hace lo mismo con una sola etapa."""
     cfg = {**CONFIG_POR_DEFECTO, **(config or {})}
     t0 = time.perf_counter()
     texto = leer_entrada(entrada)
 
-    # Paso 1 · Recuperar (tu buscador de la A1)
-    #   recuperados = indice().buscar(texto, k=cfg["k"]) if cfg["usar_rag"] else []
-    # Paso 2 · Controles de entrada (si cfg["controles"])
-    #   recuperados = controles.opcional(controles.filtrar_clasificacion, recuperados, por_defecto=recuperados)  # Avance 2: fuera lo confidencial
-    #   if cfg["usar_rag"] and controles.debe_abstenerse(recuperados, cfg["umbral"]):
-    #       return armar_salida(t0, controles.RESPUESTA_ABSTENCION, [], True)
+    # Paso 1 · Recuperar (el buscador de la A1)
+    recuperados = indice().buscar(texto, k=cfg["k"]) if cfg["usar_rag"] else []
+    # Paso 2 · Controles de entrada: fuera lo confidencial (Avance 2) y abstención sin contexto suficiente
+    if cfg["controles"]:
+        recuperados = controles.opcional(controles.filtrar_clasificacion, recuperados, por_defecto=recuperados)
+        if cfg["usar_rag"] and controles.debe_abstenerse(recuperados, cfg["umbral"]):
+            return armar_salida(t0, controles.RESPUESTA_ABSTENCION, [], True)
     # Paso 3 · Flujo de la A2 con el contexto
-    #   flujo = FLUJO_V1 if (cfg["version_prompt"] == 1 and FLUJO_V1) else FLUJO
-    #   r = flujo.ejecutar({"entrada": texto, "contexto": contexto_para_prompt(recuperados) or "(sin contexto)"})
-    #   final = r.salidas[...]   # la salida estructurada de tu última etapa (revisa ResultadoFlujo en pipeline.py)
-    # Paso 4 · Respuesta y fuentes: convierte el artefacto a texto y toma las fuentes que citó el modelo
-    # Paso 5 · Verificar citas: errores = controles.verificar_citas(fuentes, recuperados)
-    #   si hay citas "no recuperada" y cfg["controles"] → abstente (no muestres algo con fuentes inventadas)
-    # Paso 6 · Sanear la salida (cfg["controles"]):
-    #   respuesta, avisos = controles.opcional(controles.sanear_salida, respuesta, por_defecto=(respuesta, []))
-    #   return armar_salida(t0, respuesta, fuentes, False, errores, artefacto=final, costo_usd=r.costo_usd)
-    raise NotImplementedError("Avance 1: implementa los 6 pasos de sistema() (ver comentarios y asistente.py)")
+    flujo = FLUJO_V1 if (cfg["version_prompt"] == 1 and FLUJO_V1) else FLUJO
+    r = flujo.ejecutar({"entrada": texto, "contexto": contexto_para_prompt(recuperados) or "(sin contexto)"})
+    artefacto = {**r.salidas, "flujo_ok": r.ok,
+                 "etapas": [{"etapa": e.nombre, "prompt": e.prompt, "ok": e.ok, "intentos": e.intentos,
+                             "errores": e.errores[:5]} for e in r.etapas]}
+    # Paso 4 · Respuesta y fuentes que citó el modelo
+    respuesta = respuesta_texto(r.salidas, r.etapas)
+    fuentes = fuentes_citadas(r.salidas)
+    # Paso 5 · Verificar citas: con controles, no se muestra algo con fuentes no recuperadas
+    errores = controles.verificar_citas(fuentes, recuperados)
+    if cfg["controles"] and any("no recuperada" in e for e in errores):
+        return armar_salida(t0, controles.RESPUESTA_ABSTENCION, [], True, errores,
+                            artefacto=artefacto, costo_usd=r.costo_usd)
+    # Paso 6 · Sanear la salida (Avance 2; mientras no exista, la respuesta pasa igual)
+    if cfg["controles"]:
+        respuesta, _avisos = controles.opcional(controles.sanear_salida, respuesta, por_defecto=(respuesta, []))
+    return armar_salida(t0, respuesta, fuentes, False, errores, artefacto=artefacto, costo_usd=r.costo_usd)
