@@ -66,9 +66,14 @@ Las dos mejoras de la v2:
 - Con el modelo fuerte, la v1 ya acierta en casos donde con `flash-lite` fallaba (pares 1, 3, 4 y 6), así que **no hay diferencia observable**, y tampoco una señal de que la v2 empeore. La salida de la v2 respetó el orden nuevo en todas las medidas.
 - **Por qué está incompleta:** las dos llaves llegaron al límite diario de la capa gratuita para este modelo, que Google reporta como `GenerateRequestsPerDayPerProjectPerModel-FreeTier` con límite de 20. Los 3 errores 503 («alta demanda») se reintentaron y, por el conteo, todo indica que esos reintentos también gastaron cuota. Los pares 7 y 8 y los tres resultados con 503 se pueden completar otro día con `--continuar`.
 
-## Hallazgo
+## Limitación conocida (no se corrige en esta entrega)
 
-En el par 2 (q10), las dos versiones fallan con los dos modelos por lo mismo. Un caso trae un correo con dominio `fintech.example1`, claramente inventado, pero la regla (en el prompt y en `validar_revisar`) solo acepta como de prueba `ejemplo.com`, `test.com` y los dominios que **terminan** en `.example`. El modelo no lo marca como `datos_reales` y el código sí; de ahí sale además el error de conteo, porque ese caso no debe contar. Es candidato para una v3: aceptar variantes de un dominio `.example`, o pedirle a la etapa 2 que use solo los dominios de prueba de la lista.
+En el par 2 (q10), las dos versiones fallan con los dos modelos por lo mismo. Un caso trae un correo con dominio `fintech.example1`, claramente inventado, pero la regla (en el prompt y en `validar_revisar`) solo acepta como de prueba `ejemplo.com`, `test.com` y los dominios que **terminan** en `.example`. El modelo no lo marca como `datos_reales` y el código sí; de ahí sale además el error de conteo, porque ese caso no debe contar.
+
+**Decisión:** queda documentado como limitación y no se cambia ni la regla ni la v2 en esta entrega. Se le avisó a Caro (etapa 2, que genera los casos), sin pedirle un cambio para esta entrega. Hay dos opciones para después:
+
+- que la etapa 2 use solo los dominios de prueba de la lista;
+- aceptar variantes de un dominio `.example` en una v3 de `qa_revisar` y en `validar_revisar`, siempre juntas, para que el prompt y el código sigan aplicando la misma regla.
 
 ## Efecto en el flujo
 
