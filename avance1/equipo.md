@@ -40,7 +40,7 @@ Cada integrante es dueño de **una** etapa: su prompt v1 y esquema, su validaci�
 ## Decisión de fusión (Avance 1)
 | Pieza | Opciones (de quién) | Elegida | Evidencia que la justifica |
 |---|---|---|---|
-| Buscador (A1) | | | acierto@3 en `evals/a1_*.jsonl`: |
+| Buscador (A1) | Los 4 buscadores de la A1 individual (Henrique, Gera, Caro y Luis) | El de Henrique (commit `fa3e909`, `src/finnorte/retrieval.py`): es el que se integró al flujo | **Limitación pendiente:** no hay medición comparativa. Nunca se corrió acierto@3 entre los 4 buscadores; `evals/` solo tiene la plantilla `a1_plantilla.jsonl`. La elección no está respaldada con datos todavía. |
 | Flujo (A2) | | | validaciones y consistencia en `bitacora/`: |
 | Prompts | | | |
 
