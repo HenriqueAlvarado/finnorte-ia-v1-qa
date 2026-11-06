@@ -70,3 +70,25 @@ def test_esquema_y_prompts():
     assert validar_esquema({"nombre_archivo": "test_rf12.py", "codigo_pytest": CODIGO_OK}, esquema) == []
     assert validar_esquema({"nombre_archivo": "rf12.txt", "codigo_pytest": CODIGO_OK}, esquema)
     assert validar_esquema({"codigo_pytest": CODIGO_OK}, esquema)
+    # esquema estricto: el modelo no puede inventar campos
+    assert validar_esquema({"nombre_archivo": "test_rf12.py", "codigo_pytest": CODIGO_OK, "notas": "x"}, esquema)
+
+
+def test_trampa_qa10_con_otro_formato():
+    for dato in ('telefono="55-5550-7788"', 'telefono="5555507788"', 'clabe="0021-8070-0000-0000-19"'):
+        codigo = CODIGO_OK.replace('Decimal("100.00")', f'Decimal("100.00"), {dato}')
+        errores = pytest_compila_y_cubre({"codigo_pytest": codigo}, PREVIAS)
+        assert any("qa-10" in e for e in errores), dato
+
+
+def test_imports_fuera_de_la_biblioteca_estandar():
+    codigo = "import requests\nfrom finnorte import llm\n" + CODIGO_OK
+    errores = pytest_compila_y_cubre({"codigo_pytest": codigo}, PREVIAS)
+    assert any("['finnorte', 'requests']" in e for e in errores)
+    # pytest, decimal y otros módulos estándar sí se permiten
+    assert pytest_compila_y_cubre({"codigo_pytest": "import json, datetime\n" + CODIGO_OK}, PREVIAS) == []
+
+
+def test_nombre_archivo_corresponde_al_requisito():
+    errores = pytest_compila_y_cubre({"nombre_archivo": "test_rf07.py", "codigo_pytest": CODIGO_OK}, PREVIAS)
+    assert any("debe ser test_rf12.py" in e for e in errores)
