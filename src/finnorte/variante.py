@@ -54,7 +54,7 @@ def leer_entrada(entrada: dict) -> str:
 
 # A2 · Las 4 etapas del equipo. Cada una valida contra su esquema (en el prompt) y con su regla
 # de negocio (validar=). Sin version=, cada etapa usa su prompt más reciente:
-# qa_analizar v2, qa_casos v2, qa_revisar v1, qa_pytest v3.
+# qa_analizar v2, qa_casos v2, qa_revisar v2, qa_pytest v3.
 def _etapas(version: int | None = None) -> list[Etapa]:
     return [
         Etapa("analizar", "qa_analizar", version=version, validar=validar_analizar),
