@@ -1,0 +1,370 @@
+{
+  "modelo": "gemini/gemini-3.5-flash",
+  "ts": "2026-11-06T04:12:53",
+  "completo": false,
+  "resumen": {
+    "v1": {
+      "medidos": 5,
+      "validas_primer_intento": 4,
+      "categorias_de_error": {
+        "conteo o faltantes": 1,
+        "cumple_qa08 incoherente": 1,
+        "hallazgo no reportado": 1
+      },
+      "errores_proveedor": 1
+    },
+    "v2": {
+      "medidos": 4,
+      "validas_primer_intento": 3,
+      "categorias_de_error": {
+        "conteo o faltantes": 1,
+        "cumple_qa08 incoherente": 1,
+        "hallazgo no reportado": 1
+      },
+      "errores_proveedor": 2
+    }
+  },
+  "filas": [
+    {
+      "par": 1,
+      "origen": "av1_C.json · detalle[0] · q01",
+      "v1_en_avance1": "falló",
+      "v1": {
+        "version": 1,
+        "valida": true,
+        "errores": [],
+        "categorias": [],
+        "salida": {
+          "cobertura_tipos": {
+            "positivo": 1,
+            "negativo": 2,
+            "limite": 1,
+            "monto_cero": 0,
+            "monto_negativo": 0,
+            "limite_exacto": 0,
+            "un_centavo_arriba": 0,
+            "idempotencia": 0
+          },
+          "casos_faltantes": [],
+          "cumple_qa08": false,
+          "hallazgos": [
+            {
+              "caso_id": "CP-RF07-02",
+              "tipo": "entonces_no_verificable",
+              "detalle": "entonces_no_verificable: el campo entonces no especifica un mensaje de error exacto, código o estado concreto"
+            },
+            {
+              "caso_id": "CP-RF07-03",
+              "tipo": "entonces_no_verificable",
+              "detalle": "entonces_no_verificable: el campo entonces no especifica un mensaje de error exacto, código o estado concreto"
+            }
+          ]
+        },
+        "latencia_ms": 12935.3,
+        "costo_usd": 0.0013587999999999999,
+        "tokens": [
+          2696,
+          220
+        ]
+      },
+      "v2": {
+        "version": 2,
+        "valida": true,
+        "errores": [],
+        "categorias": [],
+        "salida": {
+          "hallazgos": [
+            {
+              "caso_id": "CP-RF07-02",
+              "tipo": "entonces_no_verificable",
+              "detalle": "entonces_no_verificable: el resultado esperado no especifica un mensaje exacto, código de error o estado concreto"
+            },
+            {
+              "caso_id": "CP-RF07-03",
+              "tipo": "entonces_no_verificable",
+              "detalle": "entonces_no_verificable: el resultado esperado no especifica un mensaje exacto, código de error o estado concreto"
+            }
+          ],
+          "cobertura_tipos": {
+            "positivo": 1,
+            "negativo": 2,
+            "limite": 1,
+            "monto_cero": 0,
+            "monto_negativo": 0,
+            "limite_exacto": 0,
+            "un_centavo_arriba": 0,
+            "idempotencia": 0
+          },
+          "casos_faltantes": [],
+          "cumple_qa08": false
+        },
+        "latencia_ms": 11573.6,
+        "costo_usd": 0.0015714000000000001,
+        "tokens": [
+          2938,
+          276
+        ]
+      }
+    },
+    {
+      "par": 2,
+      "origen": "av1_C.json · detalle[9] · q10",
+      "v1_en_avance1": "falló",
+      "v1": {
+        "version": 1,
+        "valida": false,
+        "errores": [
+          "el caso CP-RF07-05 tiene un valor con forma de CORREO en el campo dado que no es dato de prueba, y falta su hallazgo datos_reales",
+          "cobertura_tipos.negativo reportado como 3 pero el conteo real en casos es 2",
+          "cumple_qa08 reportado como true pero debe ser false: hay datos_reales"
+        ],
+        "categorias": [
+          "conteo o faltantes",
+          "cumple_qa08 incoherente",
+          "hallazgo no reportado"
+        ],
+        "salida": {
+          "cobertura_tipos": {
+            "positivo": 1,
+            "negativo": 3,
+            "limite": 1,
+            "monto_cero": 0,
+            "monto_negativo": 0,
+            "limite_exacto": 0,
+            "un_centavo_arriba": 0,
+            "idempotencia": 0
+          },
+          "casos_faltantes": [],
+          "cumple_qa08": true,
+          "hallazgos": []
+        },
+        "latencia_ms": 9839.2,
+        "costo_usd": 0.0010650999999999998,
+        "tokens": [
+          2692,
+          103
+        ]
+      },
+      "v2": {
+        "version": 2,
+        "valida": false,
+        "errores": [
+          "el caso CP-RF07-05 tiene un valor con forma de CORREO en el campo dado que no es dato de prueba, y falta su hallazgo datos_reales",
+          "cobertura_tipos.negativo reportado como 3 pero el conteo real en casos es 2",
+          "cumple_qa08 reportado como true pero debe ser false: hay datos_reales"
+        ],
+        "categorias": [
+          "conteo o faltantes",
+          "cumple_qa08 incoherente",
+          "hallazgo no reportado"
+        ],
+        "salida": {
+          "hallazgos": [],
+          "cobertura_tipos": {
+            "positivo": 1,
+            "negativo": 3,
+            "limite": 1,
+            "monto_cero": 0,
+            "monto_negativo": 0,
+            "limite_exacto": 0,
+            "un_centavo_arriba": 0,
+            "idempotencia": 0
+          },
+          "casos_faltantes": [],
+          "cumple_qa08": true
+        },
+        "latencia_ms": 23904.8,
+        "costo_usd": 0.0012077,
+        "tokens": [
+          2934,
+          131
+        ]
+      }
+    },
+    {
+      "par": 3,
+      "origen": "av1_C.json · detalle[11] · q12",
+      "v1_en_avance1": "falló",
+      "v1": {
+        "version": 1,
+        "valida": true,
+        "errores": [],
+        "categorias": [],
+        "salida": {
+          "cobertura_tipos": {
+            "positivo": 1,
+            "negativo": 3,
+            "limite": 1,
+            "monto_cero": 0,
+            "monto_negativo": 0,
+            "limite_exacto": 0,
+            "un_centavo_arriba": 0,
+            "idempotencia": 0
+          },
+          "casos_faltantes": [],
+          "cumple_qa08": false,
+          "hallazgos": [
+            {
+              "caso_id": "CP-RF08-05",
+              "tipo": "entonces_no_verificable",
+              "detalle": "entonces_no_verificable: el resultado esperado no especifica un mensaje de error exacto, código HTTP o estado concreto"
+            }
+          ]
+        },
+        "latencia_ms": 16517.9,
+        "costo_usd": 0.0012768,
+        "tokens": [
+          2531,
+          207
+        ]
+      },
+      "v2": {
+        "version": 2,
+        "error_proveedor": "HTTP 503: {"
+      }
+    },
+    {
+      "par": 4,
+      "origen": "av1_C.json · detalle[28] · q05",
+      "v1_en_avance1": "falló",
+      "v1": {
+        "version": 1,
+        "valida": true,
+        "errores": [],
+        "categorias": [],
+        "salida": {
+          "cobertura_tipos": {
+            "positivo": 1,
+            "negativo": 1,
+            "limite": 1,
+            "monto_cero": 1,
+            "monto_negativo": 1,
+            "limite_exacto": 1,
+            "un_centavo_arriba": 1,
+            "idempotencia": 1
+          },
+          "casos_faltantes": [],
+          "cumple_qa08": false,
+          "hallazgos": [
+            {
+              "caso_id": "CP-RF21-05",
+              "tipo": "entonces_no_verificable",
+              "detalle": "entonces_no_verificable: el resultado esperado no especifica un mensaje exacto, código de error ni estado concreto"
+            }
+          ]
+        },
+        "latencia_ms": 24319.3,
+        "costo_usd": 0.0013636999999999998,
+        "tokens": [
+          3204,
+          161
+        ]
+      },
+      "v2": {
+        "version": 2,
+        "valida": true,
+        "errores": [],
+        "categorias": [],
+        "salida": {
+          "hallazgos": [
+            {
+              "caso_id": "CP-RF21-05",
+              "tipo": "entonces_no_verificable",
+              "detalle": "entonces_no_verificable: el campo entonces no proporciona un mensaje exacto, código de error o estado concreto"
+            }
+          ],
+          "cobertura_tipos": {
+            "positivo": 1,
+            "negativo": 1,
+            "limite": 1,
+            "monto_cero": 1,
+            "monto_negativo": 1,
+            "limite_exacto": 1,
+            "un_centavo_arriba": 1,
+            "idempotencia": 1
+          },
+          "casos_faltantes": [],
+          "cumple_qa08": false
+        },
+        "latencia_ms": 17891.7,
+        "costo_usd": 0.0015438,
+        "tokens": [
+          3446,
+          204
+        ]
+      }
+    },
+    {
+      "par": 5,
+      "origen": "av1_C.json · detalle[41] · q11",
+      "v1_en_avance1": "falló",
+      "v1": {
+        "version": 1,
+        "error_proveedor": "HTTP 503: {"
+      },
+      "v2": {
+        "version": 2,
+        "valida": true,
+        "errores": [],
+        "categorias": [],
+        "salida": {
+          "hallazgos": [],
+          "cobertura_tipos": {
+            "positivo": 1,
+            "negativo": 1,
+            "limite": 1,
+            "monto_cero": 1,
+            "monto_negativo": 1,
+            "limite_exacto": 1,
+            "un_centavo_arriba": 1,
+            "idempotencia": 1
+          },
+          "casos_faltantes": [],
+          "cumple_qa08": true
+        },
+        "latencia_ms": 23931.4,
+        "costo_usd": 0.0012795,
+        "tokens": [
+          3415,
+          102
+        ]
+      }
+    },
+    {
+      "par": 6,
+      "origen": "av1_B.json · detalle[6] · q07",
+      "v1_en_avance1": "falló",
+      "v1": {
+        "version": 1,
+        "valida": true,
+        "errores": [],
+        "categorias": [],
+        "salida": {
+          "cobertura_tipos": {
+            "positivo": 1,
+            "negativo": 1,
+            "limite": 1,
+            "monto_cero": 1,
+            "monto_negativo": 1,
+            "limite_exacto": 1,
+            "un_centavo_arriba": 1,
+            "idempotencia": 1
+          },
+          "casos_faltantes": [],
+          "cumple_qa08": true,
+          "hallazgos": []
+        },
+        "latencia_ms": 8715.1,
+        "costo_usd": 0.0010741,
+        "tokens": [
+          2722,
+          103
+        ]
+      },
+      "v2": {
+        "version": 2,
+        "error_proveedor": "HTTP 503: {"
+      }
+    }
+  ]
+}

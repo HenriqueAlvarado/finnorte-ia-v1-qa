@@ -1,0 +1,318 @@
+{
+  "modelo": "gemini/gemini-3.1-flash-lite",
+  "ts": "2026-11-06T03:57:25",
+  "resumen": {
+    "v1": {
+      "medidos": 8,
+      "validas_primer_intento": 1,
+      "categorias_de_error": {
+        "conteo o faltantes": 6,
+        "cumple_qa08 incoherente": 2,
+        "hallazgo no reportado": 1
+      },
+      "errores_proveedor": 0
+    },
+    "v2": {
+      "medidos": 8,
+      "validas_primer_intento": 4,
+      "categorias_de_error": {
+        "conteo o faltantes": 4,
+        "cumple_qa08 incoherente": 2,
+        "hallazgo no reportado": 1
+      },
+      "errores_proveedor": 0
+    }
+  },
+  "filas": [
+    {
+      "par": 1,
+      "origen": "av1_C.json · detalle[0] · q01",
+      "v1_en_avance1": "falló",
+      "v1": {
+        "version": 1,
+        "valida": false,
+        "errores": [
+          "casos_faltantes no debe incluir limite para RF07",
+          "casos_faltantes no debe incluir negativo para RF07",
+          "casos_faltantes no debe incluir positivo para RF07"
+        ],
+        "categorias": [
+          "conteo o faltantes"
+        ],
+        "latencia_ms": 7216.4,
+        "costo_usd": 0.0017138,
+        "tokens": [
+          2696,
+          362
+        ]
+      },
+      "v2": {
+        "version": 2,
+        "valida": false,
+        "errores": [
+          "casos_faltantes no debe incluir limite para RF07",
+          "cumple_qa08 reportado como false pero debe ser true: no hay tipos faltantes ni hallazgos que lo bloqueen"
+        ],
+        "categorias": [
+          "conteo o faltantes",
+          "cumple_qa08 incoherente"
+        ],
+        "latencia_ms": 2267.7,
+        "costo_usd": 0.0012889000000000002,
+        "tokens": [
+          2938,
+          163
+        ]
+      }
+    },
+    {
+      "par": 2,
+      "origen": "av1_C.json · detalle[9] · q10",
+      "v1_en_avance1": "falló",
+      "v1": {
+        "version": 1,
+        "valida": false,
+        "errores": [
+          "el caso CP-RF07-05 tiene un valor con forma de CORREO en el campo dado que no es dato de prueba, y falta su hallazgo datos_reales",
+          "cobertura_tipos.negativo reportado como 3 pero el conteo real en casos es 2",
+          "cumple_qa08 reportado como true pero debe ser false: hay datos_reales"
+        ],
+        "categorias": [
+          "conteo o faltantes",
+          "cumple_qa08 incoherente",
+          "hallazgo no reportado"
+        ],
+        "latencia_ms": 1062.6,
+        "costo_usd": 0.0011376,
+        "tokens": [
+          2692,
+          132
+        ]
+      },
+      "v2": {
+        "version": 2,
+        "valida": false,
+        "errores": [
+          "el caso CP-RF07-05 tiene un valor con forma de CORREO en el campo dado que no es dato de prueba, y falta su hallazgo datos_reales",
+          "cobertura_tipos.negativo reportado como 3 pero el conteo real en casos es 2",
+          "cumple_qa08 reportado como true pero debe ser false: hay datos_reales"
+        ],
+        "categorias": [
+          "conteo o faltantes",
+          "cumple_qa08 incoherente",
+          "hallazgo no reportado"
+        ],
+        "latencia_ms": 2837.8,
+        "costo_usd": 0.0012077,
+        "tokens": [
+          2934,
+          131
+        ]
+      }
+    },
+    {
+      "par": 3,
+      "origen": "av1_C.json · detalle[11] · q12",
+      "v1_en_avance1": "falló",
+      "v1": {
+        "version": 1,
+        "valida": false,
+        "errores": [
+          "casos_faltantes no debe incluir limite para RF08"
+        ],
+        "categorias": [
+          "conteo o faltantes"
+        ],
+        "latencia_ms": 5693.0,
+        "costo_usd": 0.0014843,
+        "tokens": [
+          2531,
+          290
+        ]
+      },
+      "v2": {
+        "version": 2,
+        "valida": false,
+        "errores": [
+          "cobertura_tipos.negativo reportado como 2 pero el conteo real en casos es 3",
+          "casos_faltantes no debe incluir limite para RF08"
+        ],
+        "categorias": [
+          "conteo o faltantes"
+        ],
+        "latencia_ms": 1925.4,
+        "costo_usd": 0.0014069,
+        "tokens": [
+          2773,
+          230
+        ]
+      }
+    },
+    {
+      "par": 4,
+      "origen": "av1_C.json · detalle[28] · q05",
+      "v1_en_avance1": "falló",
+      "v1": {
+        "version": 1,
+        "valida": false,
+        "errores": [
+          "cobertura_tipos.negativo reportado como 2 pero el conteo real en casos es 1"
+        ],
+        "categorias": [
+          "conteo o faltantes"
+        ],
+        "latencia_ms": 13302.0,
+        "costo_usd": 0.0012911999999999997,
+        "tokens": [
+          3204,
+          132
+        ]
+      },
+      "v2": {
+        "version": 2,
+        "valida": true,
+        "errores": [],
+        "categorias": [],
+        "latencia_ms": 4529.9,
+        "costo_usd": 0.0013613,
+        "tokens": [
+          3446,
+          131
+        ]
+      }
+    },
+    {
+      "par": 5,
+      "origen": "av1_C.json · detalle[41] · q11",
+      "v1_en_avance1": "falló",
+      "v1": {
+        "version": 1,
+        "valida": false,
+        "errores": [
+          "cobertura_tipos.negativo reportado como 2 pero el conteo real en casos es 1"
+        ],
+        "categorias": [
+          "conteo o faltantes"
+        ],
+        "latencia_ms": 1676.4,
+        "costo_usd": 0.0024269,
+        "tokens": [
+          3173,
+          590
+        ]
+      },
+      "v2": {
+        "version": 2,
+        "valida": true,
+        "errores": [],
+        "categorias": [],
+        "latencia_ms": 4000.1,
+        "costo_usd": 0.0023345,
+        "tokens": [
+          3415,
+          524
+        ]
+      }
+    },
+    {
+      "par": 6,
+      "origen": "av1_B.json · detalle[6] · q07",
+      "v1_en_avance1": "falló",
+      "v1": {
+        "version": 1,
+        "valida": false,
+        "errores": [
+          "cobertura_tipos.monto_cero reportado como 2 pero el conteo real en casos es 1"
+        ],
+        "categorias": [
+          "conteo o faltantes"
+        ],
+        "latencia_ms": 1013.0,
+        "costo_usd": 0.0011466,
+        "tokens": [
+          2722,
+          132
+        ]
+      },
+      "v2": {
+        "version": 2,
+        "valida": true,
+        "errores": [],
+        "categorias": [],
+        "latencia_ms": 1098.4,
+        "costo_usd": 0.0012166999999999998,
+        "tokens": [
+          2964,
+          131
+        ]
+      }
+    },
+    {
+      "par": 7,
+      "origen": "av1_C.json · detalle[3] · q04",
+      "v1_en_avance1": "válida al intento 2",
+      "v1": {
+        "version": 1,
+        "valida": false,
+        "errores": [
+          "cumple_qa08 reportado como true pero debe ser false: hay entonces_no_verificable"
+        ],
+        "categorias": [
+          "cumple_qa08 incoherente"
+        ],
+        "latencia_ms": 1339.1,
+        "costo_usd": 0.0014440999999999998,
+        "tokens": [
+          3097,
+          206
+        ]
+      },
+      "v2": {
+        "version": 2,
+        "valida": false,
+        "errores": [
+          "cobertura_tipos.idempotencia reportado como 0 pero el conteo real en casos es 1",
+          "casos_faltantes no debe incluir idempotencia para RF18"
+        ],
+        "categorias": [
+          "conteo o faltantes"
+        ],
+        "latencia_ms": 3544.0,
+        "costo_usd": 0.0015841999999999998,
+        "tokens": [
+          3339,
+          233
+        ]
+      }
+    },
+    {
+      "par": 8,
+      "origen": "av1_D.json · detalle[23] · q02",
+      "v1_en_avance1": "válida al intento 2",
+      "v1": {
+        "version": 1,
+        "valida": true,
+        "errores": [],
+        "categorias": [],
+        "latencia_ms": 8969.7,
+        "costo_usd": 0.0013643999999999998,
+        "tokens": [
+          3448,
+          132
+        ]
+      },
+      "v2": {
+        "version": 2,
+        "valida": true,
+        "errores": [],
+        "categorias": [],
+        "latencia_ms": 2814.1,
+        "costo_usd": 0.0026495,
+        "tokens": [
+          3690,
+          617
+        ]
+      }
+    }
+  ]
+}
