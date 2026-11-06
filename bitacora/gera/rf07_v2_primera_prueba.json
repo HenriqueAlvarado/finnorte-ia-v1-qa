@@ -1,0 +1,45 @@
+{
+  "prompt": "qa_analizar",
+  "version": 2,
+  "modelo": "gemini-3.5-flash",
+  "ok": true,
+  "intentos": 1,
+  "errores": [],
+  "salida": {
+    "requisito_id": "RF07",
+    "es_operacion_dinero": false,
+    "reglas_negocio": [
+      {
+        "id": "REG-RF07-01",
+        "texto": "El sistema debe permitir el registro de usuarios mediante correo electrónico y contraseña."
+      },
+      {
+        "id": "REG-RF07-02",
+        "texto": "El correo electrónico ingresado debe ser único y no estar registrado previamente en el sistema."
+      },
+      {
+        "id": "REG-RF07-03",
+        "texto": "El sistema debe rechazar contraseñas con una longitud menor a 8 caracteres (longitud mínima permitida: 8 caracteres)."
+      },
+      {
+        "id": "REG-RF07-04",
+        "texto": "El sistema debe mostrar un mensaje de confirmación cuando el registro se complete exitosamente."
+      }
+    ],
+    "datos_prueba": [
+      "Correo electrónico no registrado previamente (caso positivo)",
+      "Correo electrónico ya registrado previamente en el sistema (caso negativo)",
+      "Contraseña de 7 caracteres (caso de límite inferior inválido)",
+      "Contraseña de 8 caracteres (caso de límite exacto mínimo válido)",
+      "Contraseña de 9 caracteres (caso positivo de longitud)",
+      "Estado de confirmación de registro exitoso"
+    ],
+    "ambiguedades": [
+      "No se especifican las reglas de formato o sintaxis del correo electrónico aceptado.",
+      "No se especifican reglas de complejidad para la contraseña (uso de mayúsculas, minúsculas, números o caracteres especiales).",
+      "No se define el texto o contenido exacto del mensaje de confirmación tras un registro exitoso.",
+      "No se especifican los mensajes de error exactos al ingresar un correo duplicado o una contraseña de menos de 8 caracteres.",
+      "No se indica si se requiere un proceso de verificación de correo (vía enlace o código OTP) previo o posterior al registro."
+    ]
+  }
+}
