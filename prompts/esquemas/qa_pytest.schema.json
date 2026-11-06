@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "nombre_archivo",
+    "codigo_pytest"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "nombre_archivo": {
+      "type": "string",
+      "pattern": "^test_[a-z0-9_]+\\.py$"
+    },
+    "codigo_pytest": {
+      "type": "string",
+      "minLength": 20
+    }
+  }
+}

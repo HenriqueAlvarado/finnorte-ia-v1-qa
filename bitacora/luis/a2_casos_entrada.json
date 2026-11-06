@@ -1,0 +1,286 @@
+{
+  "modelo": "gemini / gemini-3.1-flash-lite",
+  "ts": "2026-11-05T19:00:46",
+  "contexto": true,
+  "entradas": {
+    "RF07": {
+      "ok": true,
+      "casos": {
+        "casos": [
+          {
+            "id_caso": "CP-RF07-01",
+            "titulo": "Registro exitoso con datos válidos",
+            "tipo": "positivo",
+            "dado": "un usuario con correo 'usuario@dominio.com' y contraseña 'a1bcdefg'",
+            "cuando": "el usuario intenta registrarse",
+            "entonces": "se muestra el mensaje 'Registro exitoso. Revisa tu correo para activar tu cuenta'",
+            "regla_citada": "REG-RF07-07",
+            "fuente": "qa-01"
+          },
+          {
+            "id_caso": "CP-RF07-02",
+            "titulo": "Registro con correo duplicado",
+            "tipo": "negativo",
+            "dado": "un correo 'usuario@dominio.com' ya registrado en el sistema",
+            "cuando": "el usuario intenta registrarse con el mismo correo",
+            "entonces": "se muestra el mensaje 'No pudimos completar el registro con esos datos'",
+            "regla_citada": "REG-RF07-02",
+            "fuente": "qa-01"
+          },
+          {
+            "id_caso": "CP-RF07-03",
+            "titulo": "Registro con contraseña en el límite inferior de longitud",
+            "tipo": "limite",
+            "dado": "un usuario con correo 'nuevo@dominio.com' y contraseña 'a1bcdefg'",
+            "cuando": "el usuario intenta registrarse",
+            "entonces": "se muestra el mensaje 'Registro exitoso. Revisa tu correo para activar tu cuenta'",
+            "regla_citada": "REG-RF07-03",
+            "fuente": "qa-01"
+          },
+          {
+            "id_caso": "CP-RF07-04",
+            "titulo": "Registro con contraseña inválida por longitud",
+            "tipo": "negativo",
+            "dado": "un usuario con correo 'nuevo@dominio.com' y contraseña 'a1bcdef'",
+            "cuando": "el usuario intenta registrarse",
+            "entonces": "SUPUESTO: el sistema debe rechazar el registro, falta confirmar el mensaje de error exacto con el dueño del producto",
+            "regla_citada": "REG-RF07-03"
+          },
+          {
+            "id_caso": "CP-RF07-05",
+            "titulo": "Registro excediendo límite de cuentas por dispositivo",
+            "tipo": "limite",
+            "dado": "un dispositivo que ya ha registrado 3 cuentas en las últimas 24 horas",
+            "cuando": "el usuario intenta registrar una cuarta cuenta",
+            "entonces": "SUPUESTO: el sistema debe rechazar el registro, falta confirmar el mensaje de error exacto con el dueño del producto",
+            "regla_citada": "REG-RF07-09",
+            "fuente": "qa-01"
+          }
+        ]
+      },
+      "etapas": [
+        {
+          "etapa": "analizar",
+          "prompt": "qa_analizar.v2",
+          "ok": true,
+          "intentos": 1,
+          "errores": []
+        },
+        {
+          "etapa": "casos",
+          "prompt": "qa_casos.v2",
+          "ok": true,
+          "intentos": 2,
+          "errores": []
+        }
+      ]
+    },
+    "RF12": {
+      "ok": true,
+      "casos": {
+        "casos": [
+          {
+            "id_caso": "CP-RF12-01",
+            "titulo": "Transferencia exitosa con datos válidos",
+            "tipo": "positivo",
+            "dado": "una cuenta nivel 1 con saldo suficiente",
+            "cuando": "se realiza una transferencia de 100.00 MXN a una CLABE válida con concepto 'Pago renta'",
+            "entonces": "se acepta la transferencia",
+            "regla_citada": "REG-RF12-01"
+          },
+          {
+            "id_caso": "CP-RF12-02",
+            "titulo": "Rechazo por CLABE inválida",
+            "tipo": "negativo",
+            "dado": "una cuenta nivel 1",
+            "cuando": "se intenta transferir a una CLABE de 17 dígitos",
+            "entonces": "se rechaza la operación",
+            "regla_citada": "REG-RF12-01",
+            "fuente": "qa-02"
+          },
+          {
+            "id_caso": "CP-RF12-03",
+            "titulo": "Transferencia en el límite inferior",
+            "tipo": "limite",
+            "dado": "una cuenta nivel 1",
+            "cuando": "se transfiere el monto mínimo de 1.00 MXN",
+            "entonces": "se acepta la transferencia",
+            "regla_citada": "REG-RF12-02",
+            "fuente": "qa-02"
+          },
+          {
+            "id_caso": "CP-RF12-04",
+            "titulo": "Transferencia con monto cero",
+            "tipo": "monto_cero",
+            "dado": "una cuenta nivel 1",
+            "cuando": "se intenta transferir 0.00 MXN",
+            "entonces": "se rechaza la transferencia",
+            "regla_citada": "REG-RF12-02"
+          },
+          {
+            "id_caso": "CP-RF12-05",
+            "titulo": "Transferencia con monto negativo",
+            "tipo": "monto_negativo",
+            "dado": "una cuenta nivel 1",
+            "cuando": "se intenta transferir -50.00 MXN",
+            "entonces": "se rechaza la transferencia",
+            "regla_citada": "REG-RF12-02"
+          },
+          {
+            "id_caso": "CP-RF12-06",
+            "titulo": "Transferencia en el límite exacto de cuenta nivel 2",
+            "tipo": "limite_exacto",
+            "dado": "una cuenta nivel 2",
+            "cuando": "se transfiere el monto máximo de 50,000.00 MXN",
+            "entonces": "se acepta la transferencia",
+            "regla_citada": "REG-RF12-03",
+            "fuente": "qa-02"
+          },
+          {
+            "id_caso": "CP-RF12-07",
+            "titulo": "Transferencia excediendo el límite por un centavo",
+            "tipo": "un_centavo_arriba",
+            "dado": "una cuenta nivel 2",
+            "cuando": "se intenta transferir 50,000.01 MXN",
+            "entonces": "se rechaza con el mensaje 'El monto excede el límite por operación'",
+            "regla_citada": "REG-RF12-03",
+            "fuente": "qa-02"
+          },
+          {
+            "id_caso": "CP-RF12-08",
+            "titulo": "Idempotencia en solicitudes repetidas",
+            "tipo": "idempotencia",
+            "dado": "una transferencia realizada con Idempotency-Key 'ABC-123'",
+            "cuando": "se envía una segunda solicitud con la misma Idempotency-Key 'ABC-123' dentro de las 24 horas",
+            "entonces": "se rechaza el segundo cargo y se devuelve el resultado de la primera operación",
+            "regla_citada": "REG-RF12-07",
+            "fuente": "qa-02"
+          }
+        ]
+      },
+      "etapas": [
+        {
+          "etapa": "analizar",
+          "prompt": "qa_analizar.v2",
+          "ok": true,
+          "intentos": 1,
+          "errores": []
+        },
+        {
+          "etapa": "casos",
+          "prompt": "qa_casos.v2",
+          "ok": true,
+          "intentos": 1,
+          "errores": []
+        }
+      ]
+    },
+    "RF15": {
+      "ok": true,
+      "casos": {
+        "casos": [
+          {
+            "id_caso": "CP-RF15-01",
+            "titulo": "Transferencia exitosa dentro del límite diario nivel 1",
+            "tipo": "positivo",
+            "dado": "un cliente nivel 1 con acumulado diario de 10,000 MXN",
+            "cuando": "realiza una transferencia de 5,000 MXN",
+            "entonces": "se acepta la transferencia",
+            "regla_citada": "REG-RF15-01",
+            "fuente": "qa-03"
+          },
+          {
+            "id_caso": "CP-RF15-02",
+            "titulo": "Rechazo por exceder límite diario nivel 1",
+            "tipo": "negativo",
+            "dado": "un cliente nivel 1 con acumulado diario de 18,000 MXN",
+            "cuando": "realiza una transferencia de 1.00 MXN",
+            "entonces": "se rechaza con el mensaje 'Alcanzaste tu límite diario'",
+            "regla_citada": "REG-RF15-04",
+            "fuente": "qa-03"
+          },
+          {
+            "id_caso": "CP-RF15-03",
+            "titulo": "Transferencia en el límite exacto diario nivel 1",
+            "tipo": "limite_exacto",
+            "dado": "un cliente nivel 1 con acumulado diario de 17,999 MXN",
+            "cuando": "realiza una transferencia de 1.00 MXN",
+            "entonces": "se acepta la transferencia",
+            "regla_citada": "REG-RF15-01"
+          },
+          {
+            "id_caso": "CP-RF15-04",
+            "titulo": "Rechazo por un centavo arriba del límite diario nivel 2",
+            "tipo": "un_centavo_arriba",
+            "dado": "un cliente nivel 2 con acumulado diario de 120,000 MXN",
+            "cuando": "realiza una transferencia de 0.01 MXN",
+            "entonces": "se rechaza con el mensaje 'Alcanzaste tu límite diario'",
+            "regla_citada": "REG-RF15-04"
+          },
+          {
+            "id_caso": "CP-RF15-05",
+            "titulo": "Intento de transferencia con monto cero",
+            "tipo": "monto_cero",
+            "dado": "un cliente nivel 1",
+            "cuando": "realiza una transferencia de 0.00 MXN",
+            "entonces": "SUPUESTO: falta confirmar el mensaje de error específico para monto cero, ya que el requisito solo menciona el límite diario",
+            "regla_citada": "REG-RF15-01"
+          },
+          {
+            "id_caso": "CP-RF15-06",
+            "titulo": "Intento de transferencia con monto negativo",
+            "tipo": "monto_negativo",
+            "dado": "un cliente nivel 1",
+            "cuando": "realiza una transferencia de -100.00 MXN",
+            "entonces": "SUPUESTO: falta confirmar el comportamiento del sistema ante montos negativos",
+            "regla_citada": "REG-RF15-01"
+          },
+          {
+            "id_caso": "CP-RF15-07",
+            "titulo": "Idempotencia en transferencia",
+            "tipo": "idempotencia",
+            "dado": "un cliente nivel 1 con una transferencia exitosa realizada hace 1 hora",
+            "cuando": "reintenta la misma transferencia con la misma Idempotency-Key",
+            "entonces": "se devuelve la respuesta de la operación original sin generar un segundo cargo",
+            "regla_citada": "REG-RF15-01",
+            "fuente": "qa-02"
+          },
+          {
+            "id_caso": "CP-RF15-08",
+            "titulo": "Validación de reinicio de acumulado diario",
+            "tipo": "limite",
+            "dado": "un cliente nivel 1 con acumulado de 18,000 MXN a las 23:59:59",
+            "cuando": "realiza una transferencia de 1,000 MXN a las 00:00:01",
+            "entonces": "se acepta la transferencia",
+            "regla_citada": "REG-RF15-02"
+          },
+          {
+            "id_caso": "CP-RF15-09",
+            "titulo": "Transferencia fallida no suma al acumulado",
+            "tipo": "limite",
+            "dado": "un cliente nivel 1 con acumulado de 17,000 MXN",
+            "cuando": "realiza una transferencia de 5,000 MXN que es rechazada por CLABE inválida",
+            "entonces": "el acumulado diario permanece en 17,000 MXN",
+            "regla_citada": "REG-RF15-03"
+          }
+        ]
+      },
+      "etapas": [
+        {
+          "etapa": "analizar",
+          "prompt": "qa_analizar.v2",
+          "ok": true,
+          "intentos": 1,
+          "errores": []
+        },
+        {
+          "etapa": "casos",
+          "prompt": "qa_casos.v2",
+          "ok": true,
+          "intentos": 1,
+          "errores": []
+        }
+      ]
+    }
+  }
+}
