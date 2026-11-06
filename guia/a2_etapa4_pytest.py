@@ -106,10 +106,21 @@ def correr_etapa4(version: int, casos: dict) -> dict:
     codigo = (datos or {}).get("codigo_pytest", "") if isinstance(datos, dict) else ""
     tests = sorted(set(re.findall(r"def (test_\w+)\s*\(", codigo)))
     esperados = sorted(nombre_test(c["id_caso"]) for c in casos.get("casos", []))
+    if codigo:  # evidencia: el archivo que generó el modelo (último intento)
+        destino = SALIDA / "generados" / f"v{version}" / f"{next(iter(_rf_de(casos)), 'rf')}_rep{_rep_actual}.py"
+        destino.parent.mkdir(parents=True, exist_ok=True)
+        destino.write_text(codigo, encoding="utf-8")
     return {"prompt": p.nombre, "valida": not errores, "intentos": intento,
-            "valida_primer_intento": not errores_primer_intento, "errores_primer_intento": errores_primer_intento[:5],
-            "errores_final": errores[:5], "nombre_archivo": (datos or {}).get("nombre_archivo") if isinstance(datos, dict) else None,
+            "valida_primer_intento": not errores_primer_intento, "errores_primer_intento": errores_primer_intento,
+            "errores_final": errores, "nombre_archivo": (datos or {}).get("nombre_archivo") if isinstance(datos, dict) else None,
             "tests": len(tests), "casos": len(esperados), "tests_esperados_presentes": sum(t in tests for t in esperados)}
+
+
+_rep_actual = 1
+
+
+def _rf_de(casos: dict) -> set[str]:
+    return {m.group(1).lower() for c in casos.get("casos", []) if (m := re.match(r"CP-(RF\d+)-", str(c.get("id_caso", ""))))}
 
 
 def corta(t: str, n: int = 90) -> str:
@@ -119,7 +130,8 @@ def corta(t: str, n: int = 90) -> str:
 def escribir_matriz(version: int, filas: list[dict]) -> Path:
     lineas = [f"# Matriz de la etapa 4 · qa_pytest v{version}", "",
               f"Modelo: {modelo()} · casos de entrada: `{CASOS_CONGELADOS.name}` (los mismos para v1 y v2)", "",
-              "| Entrada | Rep | Prompt | Artefacto | Válida | Intentos | 1.er intento | Errores (1.er intento) |",
+              "Artefacto y Válida son del intento final; la última columna son los errores que la validación devolvió en el 1.er intento.", "",
+              "| Entrada | Rep | Prompt | Artefacto (final) | Válida | Intentos | 1.er intento | Errores (1.er intento) |",
               "|---|---|---|---|---|---|---|---|"]
     for f in filas:
         if "error_proveedor" in f:
@@ -164,6 +176,8 @@ def main() -> None:
             if not e.get("ok"):
                 continue
             for rep in range(1, REPETICIONES[rf] + 1):
+                global _rep_actual
+                _rep_actual = rep
                 try:
                     filas.append({"entrada": rf, "rep": rep, **correr_etapa4(version, e["casos"])})
                 except Exception as ex:

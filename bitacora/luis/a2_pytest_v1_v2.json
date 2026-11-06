@@ -1,0 +1,254 @@
+{
+  "modelo": "gemini / gemini-3.1-flash-lite",
+  "ts": "2026-11-05T19:05:55",
+  "versiones": {
+    "v1": {
+      "resumen": {
+        "ejecuciones": 5,
+        "errores_proveedor": 0,
+        "validas_primer_intento": 0,
+        "validas_final": 0,
+        "reglas_disparadas_primer_intento": 38
+      },
+      "filas": [
+        {
+          "entrada": "RF07",
+          "rep": 1,
+          "prompt": "qa_pytest.v1",
+          "valida": false,
+          "intentos": 2,
+          "valida_primer_intento": false,
+          "errores_primer_intento": [
+            "test_cp_rf07_01: no cita la regla REG-RF07-07",
+            "test_cp_rf07_02: no cita la regla REG-RF07-02",
+            "test_cp_rf07_03: no cita la regla REG-RF07-03",
+            "test_cp_rf07_04: no cita la regla REG-RF07-03",
+            "test_cp_rf07_05: no cita la regla REG-RF07-09"
+          ],
+          "errores_final": [
+            "CP-RF07-01: falta la función test_cp_rf07_01",
+            "CP-RF07-02: falta la función test_cp_rf07_02",
+            "CP-RF07-03: falta la función test_cp_rf07_03",
+            "CP-RF07-04: falta la función test_cp_rf07_04",
+            "CP-RF07-05: falta la función test_cp_rf07_05"
+          ],
+          "nombre_archivo": "test_rf07.py",
+          "tests": 1,
+          "casos": 5,
+          "tests_esperados_presentes": 0
+        },
+        {
+          "entrada": "RF12",
+          "rep": 1,
+          "prompt": "qa_pytest.v1",
+          "valida": false,
+          "intentos": 2,
+          "valida_primer_intento": false,
+          "errores_primer_intento": [
+            "CP-RF12-01: falta la función test_cp_rf12_01",
+            "CP-RF12-02: falta la función test_cp_rf12_02",
+            "CP-RF12-03: falta la función test_cp_rf12_03",
+            "CP-RF12-04: falta la función test_cp_rf12_04",
+            "CP-RF12-05: falta la función test_cp_rf12_05",
+            "CP-RF12-06: falta la función test_cp_rf12_06",
+            "CP-RF12-07: falta la función test_cp_rf12_07",
+            "CP-RF12-08: falta la función test_cp_rf12_08"
+          ],
+          "errores_final": [
+            "test_cp_rf12_01: no cita la regla REG-RF12-01",
+            "test_cp_rf12_02: no cita la regla REG-RF12-01",
+            "test_cp_rf12_03: no cita la regla REG-RF12-02",
+            "test_cp_rf12_04: no cita la regla REG-RF12-02",
+            "test_cp_rf12_05: no cita la regla REG-RF12-02",
+            "test_cp_rf12_06: no cita la regla REG-RF12-03",
+            "test_cp_rf12_07: no cita la regla REG-RF12-03",
+            "test_cp_rf12_08: no cita la regla REG-RF12-07"
+          ],
+          "nombre_archivo": "test_rf12.py",
+          "tests": 8,
+          "casos": 8,
+          "tests_esperados_presentes": 8
+        },
+        {
+          "entrada": "RF12",
+          "rep": 2,
+          "prompt": "qa_pytest.v1",
+          "valida": false,
+          "intentos": 2,
+          "valida_primer_intento": false,
+          "errores_primer_intento": [
+            "CP-RF12-01: falta la función test_cp_rf12_01",
+            "CP-RF12-02: falta la función test_cp_rf12_02",
+            "CP-RF12-03: falta la función test_cp_rf12_03",
+            "CP-RF12-04: falta la función test_cp_rf12_04",
+            "CP-RF12-05: falta la función test_cp_rf12_05",
+            "CP-RF12-06: falta la función test_cp_rf12_06",
+            "CP-RF12-07: falta la función test_cp_rf12_07",
+            "CP-RF12-08: falta la función test_cp_rf12_08"
+          ],
+          "errores_final": [
+            "test_cp_rf12_01: no cita la regla REG-RF12-01",
+            "test_cp_rf12_02: no cita la regla REG-RF12-01",
+            "test_cp_rf12_03: no cita la regla REG-RF12-02",
+            "test_cp_rf12_04: no cita la regla REG-RF12-02",
+            "test_cp_rf12_05: no cita la regla REG-RF12-02",
+            "test_cp_rf12_06: no cita la regla REG-RF12-03",
+            "test_cp_rf12_07: no cita la regla REG-RF12-03",
+            "test_cp_rf12_08: no cita la regla REG-RF12-07"
+          ],
+          "nombre_archivo": "test_rf12.py",
+          "tests": 8,
+          "casos": 8,
+          "tests_esperados_presentes": 8
+        },
+        {
+          "entrada": "RF12",
+          "rep": 3,
+          "prompt": "qa_pytest.v1",
+          "valida": false,
+          "intentos": 2,
+          "valida_primer_intento": false,
+          "errores_primer_intento": [
+            "CP-RF12-01: falta la función test_cp_rf12_01",
+            "CP-RF12-02: falta la función test_cp_rf12_02",
+            "CP-RF12-03: falta la función test_cp_rf12_03",
+            "CP-RF12-04: falta la función test_cp_rf12_04",
+            "CP-RF12-05: falta la función test_cp_rf12_05",
+            "CP-RF12-06: falta la función test_cp_rf12_06",
+            "CP-RF12-07: falta la función test_cp_rf12_07",
+            "CP-RF12-08: falta la función test_cp_rf12_08"
+          ],
+          "errores_final": [
+            "test_cp_rf12_01: no cita la regla REG-RF12-01",
+            "test_cp_rf12_02: no cita la regla REG-RF12-01",
+            "test_cp_rf12_03: no cita la regla REG-RF12-02",
+            "test_cp_rf12_04: no cita la regla REG-RF12-02",
+            "test_cp_rf12_05: no cita la regla REG-RF12-02",
+            "test_cp_rf12_06: no cita la regla REG-RF12-03",
+            "test_cp_rf12_07: no cita la regla REG-RF12-03",
+            "test_cp_rf12_08: no cita la regla REG-RF12-07"
+          ],
+          "nombre_archivo": "test_rf12.py",
+          "tests": 8,
+          "casos": 8,
+          "tests_esperados_presentes": 8
+        },
+        {
+          "entrada": "RF15",
+          "rep": 1,
+          "prompt": "qa_pytest.v1",
+          "valida": false,
+          "intentos": 2,
+          "valida_primer_intento": false,
+          "errores_primer_intento": [
+            "test_cp_rf15_01: no cita la regla REG-RF15-01",
+            "test_cp_rf15_02: no cita la regla REG-RF15-04",
+            "test_cp_rf15_03: no cita la regla REG-RF15-01",
+            "test_cp_rf15_04: no cita la regla REG-RF15-04",
+            "test_cp_rf15_05: no cita la regla REG-RF15-01",
+            "test_cp_rf15_06: no cita la regla REG-RF15-01",
+            "test_cp_rf15_07: no cita la regla REG-RF15-01",
+            "test_cp_rf15_08: no cita la regla REG-RF15-02",
+            "test_cp_rf15_09: no cita la regla REG-RF15-03"
+          ],
+          "errores_final": [
+            "test_cp_rf15_01: no cita la regla REG-RF15-01",
+            "test_cp_rf15_02: no cita la regla REG-RF15-04",
+            "test_cp_rf15_03: no cita la regla REG-RF15-01",
+            "test_cp_rf15_04: no cita la regla REG-RF15-04",
+            "test_cp_rf15_05: no cita la regla REG-RF15-01",
+            "test_cp_rf15_06: no cita la regla REG-RF15-01",
+            "test_cp_rf15_07: no cita la regla REG-RF15-01",
+            "test_cp_rf15_08: no cita la regla REG-RF15-02",
+            "test_cp_rf15_09: no cita la regla REG-RF15-03"
+          ],
+          "nombre_archivo": "test_rf15.py",
+          "tests": 9,
+          "casos": 9,
+          "tests_esperados_presentes": 9
+        }
+      ]
+    },
+    "v2": {
+      "resumen": {
+        "ejecuciones": 5,
+        "errores_proveedor": 0,
+        "validas_primer_intento": 5,
+        "validas_final": 5,
+        "reglas_disparadas_primer_intento": 0
+      },
+      "filas": [
+        {
+          "entrada": "RF07",
+          "rep": 1,
+          "prompt": "qa_pytest.v2",
+          "valida": true,
+          "intentos": 1,
+          "valida_primer_intento": true,
+          "errores_primer_intento": [],
+          "errores_final": [],
+          "nombre_archivo": "test_rf07.py",
+          "tests": 5,
+          "casos": 5,
+          "tests_esperados_presentes": 5
+        },
+        {
+          "entrada": "RF12",
+          "rep": 1,
+          "prompt": "qa_pytest.v2",
+          "valida": true,
+          "intentos": 1,
+          "valida_primer_intento": true,
+          "errores_primer_intento": [],
+          "errores_final": [],
+          "nombre_archivo": "test_rf12.py",
+          "tests": 8,
+          "casos": 8,
+          "tests_esperados_presentes": 8
+        },
+        {
+          "entrada": "RF12",
+          "rep": 2,
+          "prompt": "qa_pytest.v2",
+          "valida": true,
+          "intentos": 1,
+          "valida_primer_intento": true,
+          "errores_primer_intento": [],
+          "errores_final": [],
+          "nombre_archivo": "test_rf12.py",
+          "tests": 8,
+          "casos": 8,
+          "tests_esperados_presentes": 8
+        },
+        {
+          "entrada": "RF12",
+          "rep": 3,
+          "prompt": "qa_pytest.v2",
+          "valida": true,
+          "intentos": 1,
+          "valida_primer_intento": true,
+          "errores_primer_intento": [],
+          "errores_final": [],
+          "nombre_archivo": "test_rf12.py",
+          "tests": 8,
+          "casos": 8,
+          "tests_esperados_presentes": 8
+        },
+        {
+          "entrada": "RF15",
+          "rep": 1,
+          "prompt": "qa_pytest.v2",
+          "valida": true,
+          "intentos": 1,
+          "valida_primer_intento": true,
+          "errores_primer_intento": [],
+          "errores_final": [],
+          "nombre_archivo": "test_rf15.py",
+          "tests": 9,
+          "casos": 9,
+          "tests_esperados_presentes": 9
+        }
+      ]
+    }
+  }
+}
