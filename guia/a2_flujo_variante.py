@@ -4,6 +4,7 @@
     python guia/a2_flujo_variante.py --requisito RF07 --rep 1
     python guia/a2_flujo_variante.py --version 1            # usa FLUJO_V1 (todos los prompts en v1)
     python guia/a2_flujo_variante.py --sin-contexto         # sin RAG, para aislar el efecto del corpus
+    python guia/a2_flujo_variante.py --rep 2 --agregar      # agrega 2 repeticiones a la matriz que ya existe
     LLM_PROVIDER=fake python guia/a2_flujo_variante.py      # sin red: solo prueba la plomería
 
 Qué hace
@@ -17,6 +18,7 @@ Con LLM_PROVIDER=fake corre de punta a punta pero los números no valen.
 """
 from __future__ import annotations
 
+import re
 import sys
 import time
 from pathlib import Path
@@ -38,6 +40,7 @@ USAR_CONTEXTO = "--sin-contexto" not in sys.argv
 VERSION = _arg("--version", "")
 FLUJO_USADO = FLUJO_V1 if (VERSION == "1" and FLUJO_V1) else FLUJO
 SALIDA = RAIZ / "bitacora" / "a2_matriz.md"
+AGREGAR = "--agregar" in sys.argv     # conserva las repeticiones completas de la matriz anterior
 K = 4
 
 
@@ -120,6 +123,36 @@ def escribir_matriz(corridas: list[dict], ruta_req: Path) -> Path:
     return SALIDA
 
 
+def leer_matriz(ruta: Path, ruta_req: Path) -> list[dict]:
+    """Repeticiones de una matriz anterior (para --agregar). Las que fallaron por el proveedor se descartan:
+    son justo las que se vuelven a correr. Se niega a mezclar corridas de otro modelo, entrada o flujo."""
+    if not ruta.exists():
+        return []
+    texto = ruta.read_text(encoding="utf-8")
+    esperado = {"Modelo": modelo(), "entrada": f"`{ruta_req.relative_to(RAIZ).as_posix()}`",
+                "flujo": FLUJO_USADO.nombre}
+    for campo, valor in esperado.items():
+        m = re.search(rf"{campo}: ([^·\n]+)", texto)
+        if not m or m.group(1).strip() != valor:
+            raise SystemExit(f"La matriz anterior tiene otro {campo} ({m.group(1).strip() if m else '?'}; "
+                             f"ahora {valor}): no se pueden mezclar. Corre sin --agregar.")
+    corridas: dict[int, dict] = {}
+    for linea in texto.splitlines():
+        if not re.match(r"^\| \d+ \|", linea):
+            continue
+        c = [x.strip() for x in linea.strip().strip("|").split("|")]
+        if c[4] == "error del proveedor":
+            continue
+        x = corridas.setdefault(int(c[0]), {"rep": int(c[0]), "etapas": []})
+        if c[1] == "**total**":
+            x.update(ok=c[4] == "✓", latencia_ms=float(c[6]), costo_usd=float(c[7]))
+        else:
+            x["etapas"].append({"etapa": c[1], "prompt": c[2], "artefacto": c[3], "ok": c[4] == "✓",
+                                "intentos": int(c[5]), "latencia_ms": float(c[6]), "costo_usd": float(c[7]),
+                                "errores": [] if c[8] == "—" else c[8].split("; ")})
+    return [x for x in corridas.values() if "ok" in x]
+
+
 def main() -> None:
     ruta_req = ruta_requisito(REQUISITO)
     texto = ruta_req.read_text(encoding="utf-8")
@@ -129,8 +162,11 @@ def main() -> None:
     print("etapas: " + " -> ".join(f"{e.nombre}({e.prompt}{'.v' + str(e.version) if e.version else ''})"
                                   for e in FLUJO_USADO.etapas))
 
-    corridas: list[dict] = []
-    for rep in range(1, REPETICIONES + 1):
+    corridas: list[dict] = leer_matriz(SALIDA, ruta_req) if AGREGAR else []
+    if AGREGAR:
+        print(f"--agregar: conservo {len(corridas)} repeticiones completas de {SALIDA.name}")
+    inicio = max((x["rep"] for x in corridas), default=0) + 1
+    for rep in range(inicio, inicio + REPETICIONES):
         t0 = time.perf_counter()
         try:
             r = FLUJO_USADO.ejecutar({"entrada": texto, "contexto": contexto})
@@ -151,7 +187,7 @@ def main() -> None:
 
     ruta = escribir_matriz(corridas, ruta_req)
     hechas = [x for x in corridas if not x.get("error_proveedor")]
-    print(f"\nflujos completos: {sum(x['ok'] for x in hechas)}/{len(hechas)} · "
+    print(f"\nflujos completos: {sum(x['ok'] for x in hechas)}/{len(corridas)} intentadas | "
           f"costo total: {sum(x.get('costo_usd', 0.0) for x in corridas):.6f} USD")
     print(f"matriz: {ruta.relative_to(RAIZ).as_posix()}")
 
