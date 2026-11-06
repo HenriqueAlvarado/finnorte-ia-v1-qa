@@ -32,7 +32,7 @@ Cada integrante es dueño de **una** etapa: su prompt v1 y esquema, su validaci�
 | 4 | `pytest` | `prompts/qa_pytest.v1.md` | Luis | oft24 |
 
 ## Reglas de trabajo
-- Nadie sube directo a `main`: rama → pull request → una aprobación → fusionar.
+- Nadie sube directo a `main`: cada integrante trabaja en su rama y abre un pull request. Quien abre el PR no lo fusiona; otro integrante lo revisa y hace el merge. La aprobación formal de GitHub no siempre se usa. En la semana 3, 6 de 11 PR los fusionó su propio autor (#1, #3, #4, #6, #5 y #9) por las prisas de la entrega; desde el #12 la regla se aplica sin excepción.
 - Cada pull request dice qué cambió y cómo se probó.
 - Las llaves van en `.env`, nunca en el repositorio. Si se filtra una, se revoca en menos de 1 hora (ing-02).
 - Si alguien no puede cumplir, lo avisa **antes** de la fecha, no después.
