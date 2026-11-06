@@ -108,10 +108,22 @@ def test_version_1_usa_flujo_v1(entorno):
     assert entorno["llamadas"][1][0] == "v2"
 
 
-def test_flujo_detenido_se_avisa_en_la_respuesta(entorno):
+def test_flujo_sin_validar_con_controles_no_muestra_lo_rechazado(entorno):
+    # Caso real de la medición del Avance 1 (q20): la etapa casos detectó un dato de qa-10 y rechazó su salida;
+    # con controles, eso no debe llegar ni a la respuesta ni al artefacto.
     entorno["ok"] = False
     out = variante.sistema(ENTRADA)
-    assert "se detuvo en la etapa «casos»" in out["respuesta"] and not out["artefacto"]["flujo_ok"]
+    assert "no pasó su validación" in out["respuesta"] and "«casos»" in out["respuesta"]
+    assert "Escenario" not in out["respuesta"] and "50,000" not in out["respuesta"]
+    assert "casos" not in out["artefacto"] and not out["artefacto"]["flujo_ok"]
+    assert all("errores" not in e for e in out["artefacto"]["etapas"])
+    assert not out["abstuvo"] and out["fuentes"] == []
+
+
+def test_flujo_sin_validar_sin_controles_se_muestra_con_aviso(entorno):
+    entorno["ok"] = False                                     # línea base (configs A a C): se mide lo que pasa sin controles
+    out = variante.sistema(ENTRADA, config={"controles": False})
+    assert "se detuvo en la etapa «casos»" in out["respuesta"] and "Escenario" in out["respuesta"]
 
 
 def test_sin_fuentes_es_error_pero_no_alucinacion(entorno):

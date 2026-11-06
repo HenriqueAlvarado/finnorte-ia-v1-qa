@@ -75,7 +75,10 @@ CONFIG_POR_DEFECTO = {
     "usar_rag": True,      # recuperar contexto del corpus de la variante (A1)
     "controles": True,     # abstención, filtrado de confidenciales, citas verificadas, saneo
     "k": 4,                # fragmentos a recuperar
-    "umbral": 0.35,        # similitud mínima para no abstenerse (ajústalo con tus datos)
+    # Umbral calibrado el 2026-11-06 con gemini-embedding-001 y k=4 sobre evals/v1-qa.jsonl: los 4 casos fuera de
+    # dominio tienen puntaje máximo de 0.606 a 0.645 y el caso de dentro más bajo (q08) 0.661. Se toma el punto
+    # medio. El hueco es de solo 0.016 y se calibró con los mismos casos que se evalúan: la abstención medida es optimista.
+    "umbral": 0.653,       # similitud mínima para no abstenerse
 }
 
 
@@ -142,9 +145,17 @@ def sistema(entrada: dict, config: dict | None = None) -> dict:
     # Paso 3 · Flujo de la A2 con el contexto
     flujo = FLUJO_V1 if (cfg["version_prompt"] == 1 and FLUJO_V1) else FLUJO
     r = flujo.ejecutar({"entrada": texto, "contexto": contexto_para_prompt(recuperados) or "(sin contexto)"})
+    etapas = [{"etapa": e.nombre, "prompt": e.prompt, "ok": e.ok, "intentos": e.intentos} for e in r.etapas]
+    if cfg["controles"] and not r.ok:
+        # Con controles, lo que una validación rechazó no se muestra ni se guarda: puede ser justo un dato real
+        # (qa-10) que la etapa detectó. Tampoco los mensajes de error, que pueden citar parte del valor.
+        fallida = next(e for e in r.etapas if not e.ok)
+        aviso = (f"No se generaron casos de prueba confiables: la salida de la etapa «{fallida.nombre}» no pasó "
+                 f"su validación después de {fallida.intentos} intentos. Revisa el requisito o vuelve a intentarlo.")
+        return armar_salida(t0, aviso, [], False, [],
+                            artefacto={"flujo_ok": False, "etapas": etapas}, costo_usd=r.costo_usd)
     artefacto = {**r.salidas, "flujo_ok": r.ok,
-                 "etapas": [{"etapa": e.nombre, "prompt": e.prompt, "ok": e.ok, "intentos": e.intentos,
-                             "errores": e.errores[:5]} for e in r.etapas]}
+                 "etapas": [{**d, "errores": e.errores[:5]} for d, e in zip(etapas, r.etapas)]}
     # Paso 4 · Respuesta y fuentes que citó el modelo
     respuesta = respuesta_texto(r.salidas, r.etapas)
     fuentes = fuentes_citadas(r.salidas)
