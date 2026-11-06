@@ -1,0 +1,956 @@
+{
+  "modelo_de_origen": "gemini/gemini-3.1-flash-lite",
+  "pares": [
+    {
+      "par": 1,
+      "origen": "av1_C.json · detalle[0] · q01",
+      "v1_en_avance1": "falló",
+      "analizar": {
+        "requisito_id": "RF07",
+        "es_operacion_dinero": false,
+        "reglas_negocio": [
+          {
+            "id": "REG-RF07-01",
+            "texto": "El registro requiere correo electrónico con formato válido y contraseña."
+          },
+          {
+            "id": "REG-RF07-02",
+            "texto": "El correo electrónico debe ser único, sin distinguir mayúsculas de minúsculas y eliminando espacios al inicio y al final."
+          },
+          {
+            "id": "REG-RF07-03",
+            "texto": "La contraseña debe tener una longitud de 8 a 64 caracteres."
+          },
+          {
+            "id": "REG-RF07-04",
+            "texto": "La contraseña debe contener al menos una letra y un número."
+          },
+          {
+            "id": "REG-RF07-05",
+            "texto": "La contraseña no puede contener el correo electrónico del usuario."
+          },
+          {
+            "id": "REG-RF07-06",
+            "texto": "La contraseña será rechazada si se encuentra en la lista de contraseñas comunes."
+          },
+          {
+            "id": "REG-RF07-07",
+            "texto": "El sistema debe mostrar el mensaje 'Registro exitoso. Revisa tu correo para activar tu cuenta' tras un registro correcto."
+          },
+          {
+            "id": "REG-RF07-08",
+            "texto": "El enlace de activación enviado por correo tiene una vigencia de 24 horas."
+          },
+          {
+            "id": "REG-RF07-09",
+            "texto": "Un mismo dispositivo puede registrar como máximo 3 cuentas en un periodo de 24 horas."
+          }
+        ],
+        "datos_prueba": [
+          "Correo con formato inválido (ej. sin @ o dominio)",
+          "Correo ya registrado (debe devolver mensaje genérico)",
+          "Correo con espacios al inicio/final y mayúsculas",
+          "Contraseña de 7 caracteres (límite inferior inválido)",
+          "Contraseña de 8 caracteres (límite inferior válido)",
+          "Contraseña de 64 caracteres (límite superior válido)",
+          "Contraseña de 65 caracteres (límite superior inválido)",
+          "Contraseña sin números o sin letras",
+          "Contraseña que contiene el correo electrónico",
+          "Contraseña presente en lista de contraseñas comunes",
+          "Registro de 3 cuentas desde el mismo dispositivo en 24 horas",
+          "Intento de registro de 4ta cuenta desde el mismo dispositivo en 24 horas"
+        ],
+        "ambiguedades": [
+          "No se especifica el comportamiento o mensaje de error cuando se excede el límite de 3 registros por dispositivo en 24 horas.",
+          "No se define el mensaje de error específico para contraseñas que no cumplen con los criterios de complejidad (letra/número/comunes), solo se menciona el rechazo.",
+          "No se especifica el estado de la cuenta si el usuario no activa el enlace en las primeras 24 horas (¿se elimina el registro o solo se bloquea el inicio de sesión?)."
+        ]
+      },
+      "casos": {
+        "casos": [
+          {
+            "id_caso": "CP-RF07-01",
+            "titulo": "Registro exitoso con datos válidos",
+            "tipo": "positivo",
+            "dado": "un usuario con correo 'usuario.nuevo@ejemplo.com' y contraseña 'Segura123'",
+            "cuando": "el usuario solicita el registro",
+            "entonces": "el sistema muestra el mensaje 'Registro exitoso. Revisa tu correo para activar tu cuenta'",
+            "regla_citada": "REG-RF07-07",
+            "fuente": "qa-01"
+          },
+          {
+            "id_caso": "CP-RF07-02",
+            "titulo": "Registro fallido por correo con formato inválido",
+            "tipo": "negativo",
+            "dado": "un usuario con correo 'correo_invalido' y contraseña 'Segura123'",
+            "cuando": "el usuario solicita el registro",
+            "entonces": "el sistema rechaza el registro",
+            "regla_citada": "REG-RF07-01"
+          },
+          {
+            "id_caso": "CP-RF07-03",
+            "titulo": "Registro fallido por contraseña menor al límite inferior",
+            "tipo": "limite",
+            "dado": "un usuario con correo 'usuario@ejemplo.com' y contraseña 'Seg123'",
+            "cuando": "el usuario solicita el registro",
+            "entonces": "el sistema rechaza el registro",
+            "regla_citada": "REG-RF07-03"
+          },
+          {
+            "id_caso": "CP-RF07-04",
+            "titulo": "Registro fallido por exceder el límite de cuentas por dispositivo",
+            "tipo": "negativo",
+            "dado": "un dispositivo que ya ha registrado 3 cuentas en las últimas 24 horas",
+            "cuando": "el usuario intenta registrar una cuarta cuenta",
+            "entonces": "SUPUESTO: el sistema debe mostrar un mensaje de error específico, falta confirmar el mensaje exacto con el dueño del producto",
+            "regla_citada": "REG-RF07-09",
+            "fuente": "qa-01"
+          }
+        ]
+      }
+    },
+    {
+      "par": 2,
+      "origen": "av1_C.json · detalle[9] · q10",
+      "v1_en_avance1": "falló",
+      "analizar": {
+        "requisito_id": "RF07",
+        "es_operacion_dinero": false,
+        "reglas_negocio": [
+          {
+            "id": "REG-RF07-01",
+            "texto": "El correo electrónico debe tener un formato válido."
+          },
+          {
+            "id": "REG-RF07-02",
+            "texto": "El correo electrónico debe ser único en FinNorte, ignorando mayúsculas/minúsculas y espacios en los extremos."
+          },
+          {
+            "id": "REG-RF07-03",
+            "texto": "Si el correo ya existe, el sistema debe mostrar el mensaje genérico: 'No pudimos completar el registro con esos datos'."
+          },
+          {
+            "id": "REG-RF07-04",
+            "texto": "La contraseña debe tener una longitud de 8 a 64 caracteres."
+          },
+          {
+            "id": "REG-RF07-05",
+            "texto": "La contraseña debe contener al menos una letra y un número."
+          },
+          {
+            "id": "REG-RF07-06",
+            "texto": "La contraseña no puede contener el correo electrónico del usuario."
+          },
+          {
+            "id": "REG-RF07-07",
+            "texto": "La contraseña debe ser rechazada si se encuentra en la lista de contraseñas comunes."
+          }
+        ],
+        "datos_prueba": [
+          "Correo válido: usuario.test@fintech.example",
+          "Correo con espacios: '  usuario@fintech.example  '",
+          "Correo existente: usuario.existente@fintech.example",
+          "Contraseña longitud mínima: 8 caracteres (ej. A1bcdefg)",
+          "Contraseña longitud máxima: 64 caracteres",
+          "Contraseña inválida longitud: 7 caracteres",
+          "Contraseña inválida formato: solo letras o solo números",
+          "Contraseña inválida contenido: contiene el correo electrónico",
+          "Contraseña inválida común: '12345678'"
+        ],
+        "ambiguedades": [
+          "No se especifica la lista de contraseñas comunes contra la cual se valida.",
+          "No se define el resultado esperado (mensaje de éxito o estado) tras un registro exitoso.",
+          "No se especifica si se requiere verificación de correo electrónico (OTP o link) para completar el registro."
+        ]
+      },
+      "casos": {
+        "casos": [
+          {
+            "id_caso": "CP-RF07-01",
+            "titulo": "Registro exitoso con correo y contraseña válidos",
+            "tipo": "positivo",
+            "dado": "el usuario ingresa el correo 'usuario.test@fintech.example' y la contraseña 'A1bcdefg'",
+            "cuando": "se solicita el registro",
+            "entonces": "SUPUESTO: se debe confirmar con el dueño del producto el mensaje de éxito o estado esperado tras el registro",
+            "regla_citada": "REG-RF07-01",
+            "fuente": "qa-01"
+          },
+          {
+            "id_caso": "CP-RF07-02",
+            "titulo": "Registro fallido por correo ya existente",
+            "tipo": "negativo",
+            "dado": "el correo 'usuario.existente@fintech.example' ya está registrado",
+            "cuando": "se intenta registrar un nuevo usuario con el mismo correo",
+            "entonces": "se rechaza con el mensaje 'No pudimos completar el registro con esos datos'",
+            "regla_citada": "REG-RF07-03",
+            "fuente": "qa-01"
+          },
+          {
+            "id_caso": "CP-RF07-03",
+            "titulo": "Registro fallido por contraseña menor a la longitud mínima",
+            "tipo": "limite",
+            "dado": "el usuario ingresa el correo 'nuevo@fintech.example' y la contraseña 'A1bcdef'",
+            "cuando": "se solicita el registro",
+            "entonces": "SUPUESTO: se debe confirmar con el dueño del producto el mensaje de error específico para longitud de contraseña",
+            "regla_citada": "REG-RF07-04"
+          },
+          {
+            "id_caso": "CP-RF07-04",
+            "titulo": "Registro fallido por contraseña en lista de comunes",
+            "tipo": "negativo",
+            "dado": "el usuario ingresa el correo 'nuevo@fintech.example' y la contraseña '12345678'",
+            "cuando": "se solicita el registro",
+            "entonces": "SUPUESTO: se debe confirmar con el dueño del producto el mensaje de error específico para contraseñas comunes",
+            "regla_citada": "REG-RF07-07"
+          },
+          {
+            "id_caso": "CP-RF07-05",
+            "titulo": "Registro fallido por contraseña que contiene el correo",
+            "tipo": "negativo",
+            "dado": "el usuario ingresa el correo 'usuario@fintech.example' y la contraseña 'usuario@fintech.example1'",
+            "cuando": "se solicita el registro",
+            "entonces": "SUPUESTO: se debe confirmar con el dueño del producto el mensaje de error específico para contraseñas que contienen el correo",
+            "regla_citada": "REG-RF07-06"
+          }
+        ]
+      }
+    },
+    {
+      "par": 3,
+      "origen": "av1_C.json · detalle[11] · q12",
+      "v1_en_avance1": "falló",
+      "analizar": {
+        "requisito_id": "RF08",
+        "es_operacion_dinero": false,
+        "reglas_negocio": [
+          {
+            "id": "REG-RF08-01",
+            "texto": "La contraseña debe tener una longitud mínima de 8 caracteres y una máxima de 64 caracteres."
+          },
+          {
+            "id": "REG-RF08-02",
+            "texto": "La contraseña debe contener al menos una letra y al menos un número."
+          },
+          {
+            "id": "REG-RF08-03",
+            "texto": "La contraseña no puede contener el correo electrónico del usuario."
+          },
+          {
+            "id": "REG-RF08-04",
+            "texto": "La contraseña será rechazada si se encuentra en la lista de contraseñas comunes."
+          }
+        ],
+        "datos_prueba": [
+          "Longitud mínima: 8 caracteres (ej. 'a1bcdefg')",
+          "Longitud máxima: 64 caracteres",
+          "Longitud inválida inferior: 7 caracteres",
+          "Longitud inválida superior: 65 caracteres",
+          "Contraseña con letras y números: 'abc12345'",
+          "Contraseña sin números: 'abcdefgh'",
+          "Contraseña sin letras: '12345678'",
+          "Contraseña que contiene el correo: 'usuario@ejemplo.com' con 'usuario123'",
+          "Contraseña en lista de comunes: '12345678', 'password123'"
+        ],
+        "ambiguedades": [
+          "No se especifica la lista exacta de contraseñas comunes para realizar la validación.",
+          "No se define el mensaje de error específico que debe mostrarse cuando la contraseña no cumple con los criterios de complejidad o longitud.",
+          "No se especifica si se permiten caracteres especiales o si estos cuentan como letras o números."
+        ]
+      },
+      "casos": {
+        "casos": [
+          {
+            "id_caso": "CP-RF08-01",
+            "titulo": "Registro con contraseña válida de longitud mínima",
+            "tipo": "positivo",
+            "dado": "el usuario ingresa un correo electrónico válido",
+            "cuando": "registra una contraseña con 8 caracteres alfanuméricos 'a1bcdefg'",
+            "entonces": "se acepta el registro con el mensaje 'Registro exitoso. Revisa tu correo para activar tu cuenta'",
+            "regla_citada": "REG-RF08-01",
+            "fuente": "qa-01"
+          },
+          {
+            "id_caso": "CP-RF08-02",
+            "titulo": "Registro con contraseña de longitud inferior al mínimo",
+            "tipo": "limite",
+            "dado": "el usuario ingresa un correo electrónico válido",
+            "cuando": "registra una contraseña de 7 caracteres 'a1bcdef'",
+            "entonces": "SUPUESTO: se debe confirmar con el dueño del producto el mensaje de error específico a mostrar cuando no se cumple la longitud mínima",
+            "regla_citada": "REG-RF08-01"
+          },
+          {
+            "id_caso": "CP-RF08-03",
+            "titulo": "Registro con contraseña que contiene el correo electrónico",
+            "tipo": "negativo",
+            "dado": "el usuario ingresa el correo 'usuario@ejemplo.com'",
+            "cuando": "registra una contraseña 'usuario123'",
+            "entonces": "SUPUESTO: se debe confirmar con el dueño del producto el mensaje de error específico a mostrar cuando la contraseña contiene el correo",
+            "regla_citada": "REG-RF08-03"
+          },
+          {
+            "id_caso": "CP-RF08-04",
+            "titulo": "Registro con contraseña sin números",
+            "tipo": "negativo",
+            "dado": "el usuario ingresa un correo electrónico válido",
+            "cuando": "registra una contraseña 'abcdefgh'",
+            "entonces": "SUPUESTO: se debe confirmar con el dueño del producto el mensaje de error específico a mostrar cuando la contraseña no cumple con la complejidad requerida",
+            "regla_citada": "REG-RF08-02"
+          },
+          {
+            "id_caso": "CP-RF08-05",
+            "titulo": "Registro con contraseña en lista de comunes",
+            "tipo": "negativo",
+            "dado": "el usuario ingresa un correo electrónico válido",
+            "cuando": "registra una contraseña '12345678'",
+            "entonces": "se rechaza el registro",
+            "regla_citada": "REG-RF08-04",
+            "fuente": "qa-01"
+          }
+        ]
+      }
+    },
+    {
+      "par": 4,
+      "origen": "av1_C.json · detalle[28] · q05",
+      "v1_en_avance1": "falló",
+      "analizar": {
+        "requisito_id": "RF21",
+        "es_operacion_dinero": true,
+        "reglas_negocio": [
+          {
+            "id": "REG-RF21-01",
+            "texto": "Las primeras 10 transferencias SPEI realizadas en un mes calendario son gratuitas."
+          },
+          {
+            "id": "REG-RF21-02",
+            "texto": "A partir de la transferencia número 11 en el mes calendario, se aplica una comisión de 5.80 MXN (5 MXN más IVA)."
+          },
+          {
+            "id": "REG-RF21-03",
+            "texto": "La comisión se cobra en el momento de la operación."
+          },
+          {
+            "id": "REG-RF21-04",
+            "texto": "Si la cuenta no dispone de saldo suficiente para cubrir el monto de la transferencia más la comisión, la operación debe ser rechazada."
+          },
+          {
+            "id": "REG-RF21-05",
+            "texto": "El uso de la misma Idempotency-Key en un periodo de 24 horas no debe generar un segundo cargo por comisión."
+          }
+        ],
+        "datos_prueba": [
+          "Transferencia 1 a 10: Comisión 0.00 MXN",
+          "Transferencia 11: Comisión 5.80 MXN",
+          "Saldo insuficiente: Saldo total < (Monto transferencia + 5.80 MXN)",
+          "Idempotency-Key: Reintento de operación con misma llave en < 24 horas",
+          "Límite inferior: 1.00 MXN",
+          "Límite máximo cuenta nivel 1: 8,000.00 MXN",
+          "Límite máximo cuenta nivel 2: 50,000.00 MXN"
+        ],
+        "ambiguedades": [
+          "No se especifica si el cobro de la comisión se calcula sobre el saldo disponible o si se bloquea el monto antes de la validación de la transferencia.",
+          "No se define el comportamiento del sistema si el saldo es suficiente para la transferencia pero insuficiente para la comisión.",
+          "No se especifica si el contador de 10 transferencias gratuitas se reinicia exactamente a las 00:00 del primer día de cada mes calendario.",
+          "No se menciona si el IVA es fijo al 16% o si el sistema debe permitir ajustes en la tasa impositiva."
+        ]
+      },
+      "casos": {
+        "casos": [
+          {
+            "id_caso": "CP-RF21-01",
+            "titulo": "Transferencia gratuita dentro del límite mensual",
+            "tipo": "positivo",
+            "dado": "una cuenta con 1,000.00 MXN y 5 transferencias realizadas en el mes",
+            "cuando": "realiza una transferencia de 100.00 MXN",
+            "entonces": "se acepta la transferencia con comisión de 0.00 MXN",
+            "regla_citada": "REG-RF21-01",
+            "fuente": "qa-04"
+          },
+          {
+            "id_caso": "CP-RF21-02",
+            "titulo": "Aplicación de comisión a partir de la transferencia 11",
+            "tipo": "limite",
+            "dado": "una cuenta con 1,000.00 MXN y 10 transferencias realizadas en el mes",
+            "cuando": "realiza una transferencia de 100.00 MXN",
+            "entonces": "se acepta la transferencia con un cargo de comisión de 5.80 MXN",
+            "regla_citada": "REG-RF21-02",
+            "fuente": "qa-04"
+          },
+          {
+            "id_caso": "CP-RF21-03",
+            "titulo": "Rechazo por saldo insuficiente para cubrir transferencia y comisión",
+            "tipo": "negativo",
+            "dado": "una cuenta con 105.00 MXN y 11 transferencias realizadas en el mes",
+            "cuando": "realiza una transferencia de 100.00 MXN",
+            "entonces": "se rechaza la operación por saldo insuficiente",
+            "regla_citada": "REG-RF21-04",
+            "fuente": "qa-04"
+          },
+          {
+            "id_caso": "CP-RF21-04",
+            "titulo": "Intento de transferencia con monto cero",
+            "tipo": "monto_cero",
+            "dado": "una cuenta con 1,000.00 MXN",
+            "cuando": "realiza una transferencia de 0.00 MXN",
+            "entonces": "SUPUESTO: se debe confirmar con el dueño del producto si el sistema rechaza el monto cero o si se aplica el límite inferior de 1.00 MXN",
+            "regla_citada": "REG-RF21-04"
+          },
+          {
+            "id_caso": "CP-RF21-05",
+            "titulo": "Intento de transferencia con monto negativo",
+            "tipo": "monto_negativo",
+            "dado": "una cuenta con 1,000.00 MXN",
+            "cuando": "realiza una transferencia de -10.00 MXN",
+            "entonces": "se rechaza la operación",
+            "regla_citada": "REG-RF21-04"
+          },
+          {
+            "id_caso": "CP-RF21-06",
+            "titulo": "Transferencia en el límite exacto de cuenta nivel 1",
+            "tipo": "limite_exacto",
+            "dado": "una cuenta nivel 1 con 8,000.00 MXN",
+            "cuando": "realiza una transferencia de 8,000.00 MXN",
+            "entonces": "se acepta la transferencia",
+            "regla_citada": "REG-RF21-04",
+            "fuente": "qa-02"
+          },
+          {
+            "id_caso": "CP-RF21-07",
+            "titulo": "Transferencia un centavo arriba del límite de cuenta nivel 1",
+            "tipo": "un_centavo_arriba",
+            "dado": "una cuenta nivel 1 con 8,000.01 MXN",
+            "cuando": "realiza una transferencia de 8,000.01 MXN",
+            "entonces": "se rechaza con el mensaje \"El monto excede el límite por operación\"",
+            "regla_citada": "REG-RF21-04",
+            "fuente": "qa-02"
+          },
+          {
+            "id_caso": "CP-RF21-08",
+            "titulo": "Idempotencia en el cobro de comisión",
+            "tipo": "idempotencia",
+            "dado": "una cuenta con 1,000.00 MXN y 11 transferencias realizadas en el mes",
+            "cuando": "realiza una transferencia de 100.00 MXN con una Idempotency-Key y reintenta la misma operación en menos de 24 horas",
+            "entonces": "el segundo intento no genera un segundo cargo de 5.80 MXN",
+            "regla_citada": "REG-RF21-05",
+            "fuente": "qa-02"
+          }
+        ]
+      }
+    },
+    {
+      "par": 5,
+      "origen": "av1_C.json · detalle[41] · q11",
+      "v1_en_avance1": "falló",
+      "analizar": {
+        "requisito_id": "RF13",
+        "es_operacion_dinero": true,
+        "reglas_negocio": [
+          {
+            "id": "REG-RF13-01",
+            "texto": "Las transferencias SPEI para cuentas nivel 1 tienen un límite máximo por operación de 8,000 MXN, incluyendo el valor exacto."
+          },
+          {
+            "id": "REG-RF13-02",
+            "texto": "Las transferencias SPEI deben ser de al menos 1.00 MXN y no exceder dos decimales."
+          },
+          {
+            "id": "REG-RF13-03",
+            "texto": "El acumulado diario de salidas para cuentas nivel 1 es de 18,000 MXN; si una operación supera este límite, se rechaza con el mensaje 'Alcanzaste tu límite diario'."
+          },
+          {
+            "id": "REG-RF13-04",
+            "texto": "La CLABE destino debe tener 18 dígitos y un dígito verificador válido."
+          },
+          {
+            "id": "REG-RF13-05",
+            "texto": "El concepto es obligatorio, máximo 40 caracteres, permitiendo solo letras, números y espacios."
+          },
+          {
+            "id": "REG-RF13-06",
+            "texto": "Se aplica una comisión de 5.80 MXN (IVA incluido) a partir de la transferencia número 11 del mes calendario; la operación se rechaza si no hay saldo suficiente para cubrirla."
+          }
+        ],
+        "datos_prueba": [
+          "Monto operación: 0.99 (Rechazo, menor al mínimo)",
+          "Monto operación: 1.00 (Aceptado, mínimo)",
+          "Monto operación: 8,000.00 (Aceptado, máximo nivel 1)",
+          "Monto operación: 8,000.01 (Rechazo, excede límite por operación)",
+          "Monto operación: 1.001 (Rechazo, más de dos decimales)",
+          "Acumulado diario: 18,000.00 (Límite diario alcanzado)",
+          "CLABE: 18 dígitos con verificador inválido (Rechazo)",
+          "Concepto: 'Pago 123' (Válido)",
+          "Concepto: 'Pago@Especial' (Rechazo, caracteres especiales)",
+          "Comisión: Transferencia 11 con saldo insuficiente (Rechazo)"
+        ],
+        "ambiguedades": [
+          "No se especifica si el monto de la comisión (5.80 MXN) se suma al monto de la transferencia para validar el límite por operación o el límite diario.",
+          "No se define el comportamiento si el cliente reduce su límite diario por debajo del acumulado ya ejecutado en el día.",
+          "No se especifica el mensaje de error exacto para cuando el monto excede el límite por operación (el contexto menciona 'El monto excede el límite por operación', pero el RF13.2 es genérico)."
+        ]
+      },
+      "casos": {
+        "casos": [
+          {
+            "id_caso": "CP-RF13-01",
+            "titulo": "Transferencia válida con concepto permitido",
+            "tipo": "positivo",
+            "dado": "una cuenta nivel 1 con saldo suficiente",
+            "cuando": "realiza una transferencia SPEI de 500.00 MXN con concepto 'Pago 123'",
+            "entonces": "se acepta la transferencia",
+            "regla_citada": "REG-RF13-05",
+            "fuente": "qa-02"
+          },
+          {
+            "id_caso": "CP-RF13-02",
+            "titulo": "Transferencia con concepto inválido",
+            "tipo": "negativo",
+            "dado": "una cuenta nivel 1",
+            "cuando": "realiza una transferencia SPEI con concepto 'Pago@Especial'",
+            "entonces": "se rechaza la transferencia",
+            "regla_citada": "REG-RF13-05",
+            "fuente": "qa-02"
+          },
+          {
+            "id_caso": "CP-RF13-03",
+            "titulo": "Transferencia en el límite máximo por operación",
+            "tipo": "limite_exacto",
+            "dado": "una cuenta nivel 1",
+            "cuando": "realiza una transferencia SPEI de 8,000.00 MXN",
+            "entonces": "se acepta la transferencia",
+            "regla_citada": "REG-RF13-01",
+            "fuente": "qa-02"
+          },
+          {
+            "id_caso": "CP-RF13-04",
+            "titulo": "Transferencia excediendo el límite por operación",
+            "tipo": "un_centavo_arriba",
+            "dado": "una cuenta nivel 1",
+            "cuando": "realiza una transferencia SPEI de 8,000.01 MXN",
+            "entonces": "se rechaza con el mensaje 'El monto excede el límite por operación'",
+            "regla_citada": "REG-RF13-01",
+            "fuente": "qa-02"
+          },
+          {
+            "id_caso": "CP-RF13-05",
+            "titulo": "Transferencia con monto cero",
+            "tipo": "monto_cero",
+            "dado": "una cuenta nivel 1",
+            "cuando": "realiza una transferencia SPEI de 0.00 MXN",
+            "entonces": "se rechaza la transferencia",
+            "regla_citada": "REG-RF13-02",
+            "fuente": "qa-02"
+          },
+          {
+            "id_caso": "CP-RF13-06",
+            "titulo": "Transferencia con monto negativo",
+            "tipo": "monto_negativo",
+            "dado": "una cuenta nivel 1",
+            "cuando": "realiza una transferencia SPEI de -100.00 MXN",
+            "entonces": "se rechaza la transferencia",
+            "regla_citada": "REG-RF13-02",
+            "fuente": "qa-02"
+          },
+          {
+            "id_caso": "CP-RF13-07",
+            "titulo": "Transferencia con CLABE inválida",
+            "tipo": "limite",
+            "dado": "una cuenta nivel 1",
+            "cuando": "realiza una transferencia SPEI con CLABE de 18 dígitos con verificador inválido",
+            "entonces": "se rechaza la transferencia",
+            "regla_citada": "REG-RF13-04",
+            "fuente": "qa-02"
+          },
+          {
+            "id_caso": "CP-RF13-08",
+            "titulo": "Idempotencia en transferencia SPEI",
+            "tipo": "idempotencia",
+            "dado": "una cuenta nivel 1 con saldo suficiente",
+            "cuando": "realiza la misma transferencia SPEI dos veces con la misma Idempotency-Key",
+            "entonces": "la segunda operación no genera un segundo cargo",
+            "regla_citada": "REG-RF13-01"
+          }
+        ]
+      }
+    },
+    {
+      "par": 6,
+      "origen": "av1_B.json · detalle[6] · q07",
+      "v1_en_avance1": "falló",
+      "analizar": {
+        "requisito_id": "RF30",
+        "es_operacion_dinero": true,
+        "reglas_negocio": [
+          {
+            "id": "REG-RF30-01",
+            "texto": "El sistema debe rechazar transferencias con monto igual a cero."
+          },
+          {
+            "id": "REG-RF30-02",
+            "texto": "El sistema debe rechazar transferencias con monto menor a cero (negativo)."
+          }
+        ],
+        "datos_prueba": [
+          "Monto: -1.00 (Negativo, debe ser rechazado)",
+          "Monto: 0.00 (Cero, debe ser rechazado)",
+          "Monto: 0.01 (Positivo, valor mínimo permitido para prueba de éxito)"
+        ],
+        "ambiguedades": [
+          "No se especifica el mensaje de error que debe mostrar el sistema al rechazar la transferencia.",
+          "No se define el comportamiento ante montos con más de dos decimales (precisión monetaria).",
+          "No se especifica si el sistema debe permitir montos positivos sin un límite máximo definido en este requisito."
+        ]
+      },
+      "casos": {
+        "casos": [
+          {
+            "id_caso": "CP-RF30-01",
+            "titulo": "Rechazo de transferencia con monto cero",
+            "tipo": "monto_cero",
+            "dado": "el usuario tiene saldo suficiente en su cuenta",
+            "cuando": "intenta realizar una transferencia por un monto de 0.00 MXN",
+            "entonces": "SUPUESTO: se rechaza la transferencia con un mensaje de error por definir",
+            "regla_citada": "REG-RF30-01"
+          },
+          {
+            "id_caso": "CP-RF30-02",
+            "titulo": "Rechazo de transferencia con monto negativo",
+            "tipo": "monto_negativo",
+            "dado": "el usuario tiene saldo suficiente en su cuenta",
+            "cuando": "intenta realizar una transferencia por un monto de -1.00 MXN",
+            "entonces": "SUPUESTO: se rechaza la transferencia con un mensaje de error por definir",
+            "regla_citada": "REG-RF30-02"
+          },
+          {
+            "id_caso": "CP-RF30-03",
+            "titulo": "Ejecución de transferencia con monto mínimo positivo",
+            "tipo": "un_centavo_arriba",
+            "dado": "el usuario tiene saldo suficiente en su cuenta",
+            "cuando": "intenta realizar una transferencia por un monto de 0.01 MXN",
+            "entonces": "SUPUESTO: se acepta la transferencia, falta confirmar si este es el límite inferior permitido",
+            "regla_citada": "REG-RF30-01"
+          },
+          {
+            "id_caso": "CP-RF30-04",
+            "titulo": "Validación de idempotencia en transferencia",
+            "tipo": "idempotencia",
+            "dado": "el usuario realiza una transferencia válida por 0.01 MXN con una Idempotency-Key específica",
+            "cuando": "reintenta la misma transferencia con la misma Idempotency-Key",
+            "entonces": "SUPUESTO: el sistema no genera un segundo cargo y devuelve el resultado de la primera operación",
+            "regla_citada": "REG-RF30-01"
+          },
+          {
+            "id_caso": "CP-RF30-05",
+            "titulo": "Validación de límite exacto en cero",
+            "tipo": "limite_exacto",
+            "dado": "el usuario tiene saldo suficiente en su cuenta",
+            "cuando": "intenta realizar una transferencia por un monto de 0.00 MXN",
+            "entonces": "SUPUESTO: se rechaza la transferencia por ser el límite inferior no permitido",
+            "regla_citada": "REG-RF30-01"
+          },
+          {
+            "id_caso": "CP-RF30-06",
+            "titulo": "Validación de transferencia positiva",
+            "tipo": "positivo",
+            "dado": "el usuario tiene saldo suficiente en su cuenta",
+            "cuando": "intenta realizar una transferencia por un monto de 100.00 MXN",
+            "entonces": "SUPUESTO: se acepta la transferencia, falta definir el límite máximo permitido",
+            "regla_citada": "REG-RF30-01"
+          },
+          {
+            "id_caso": "CP-RF30-07",
+            "titulo": "Validación de límite superior",
+            "tipo": "limite",
+            "dado": "el usuario tiene saldo suficiente en su cuenta",
+            "cuando": "intenta realizar una transferencia por un monto positivo",
+            "entonces": "SUPUESTO: se acepta la transferencia, falta definir el límite máximo permitido",
+            "regla_citada": "REG-RF30-01"
+          },
+          {
+            "id_caso": "CP-RF30-08",
+            "titulo": "Validación de transferencia negativa",
+            "tipo": "negativo",
+            "dado": "el usuario tiene saldo suficiente en su cuenta",
+            "cuando": "intenta realizar una transferencia por un monto de -50.00 MXN",
+            "entonces": "SUPUESTO: se rechaza la transferencia por ser un monto negativo",
+            "regla_citada": "REG-RF30-02"
+          }
+        ]
+      }
+    },
+    {
+      "par": 7,
+      "origen": "av1_C.json · detalle[3] · q04",
+      "v1_en_avance1": "válida al intento 2",
+      "analizar": {
+        "requisito_id": "RF18",
+        "es_operacion_dinero": true,
+        "reglas_negocio": [
+          {
+            "id": "REG-RF18-01",
+            "texto": "El cliente puede realizar el bloqueo de su tarjeta desde la app de forma inmediata."
+          },
+          {
+            "id": "REG-RF18-02",
+            "texto": "Una tarjeta bloqueada debe rechazar cualquier intento de compra o retiro posterior al bloqueo."
+          },
+          {
+            "id": "REG-RF18-03",
+            "texto": "El desbloqueo de tarjeta solo es posible si el bloqueo aplicado fue de tipo temporal."
+          },
+          {
+            "id": "REG-RF18-04",
+            "texto": "El bloqueo por robo o extravío es definitivo y requiere la emisión de una tarjeta nueva con un número distinto."
+          }
+        ],
+        "datos_prueba": [
+          "Estado de tarjeta: Activa, Bloqueo Temporal, Bloqueo Definitivo",
+          "Acciones: Bloquear, Desbloquear, Realizar compra, Realizar retiro",
+          "Tipo de bloqueo: Temporal (desbloqueable), Robo/Extravío (definitivo)",
+          "Tiempo de entrega de tarjeta nueva: 7 días hábiles"
+        ],
+        "ambiguedades": [
+          "No se especifica el mensaje de error exacto que debe recibir el cliente al intentar realizar una compra o retiro con una tarjeta bloqueada.",
+          "No se define el flujo o los pasos específicos para diferenciar entre un bloqueo temporal y un bloqueo por robo/extravío dentro de la interfaz de la app.",
+          "No se especifica si el bloqueo de la tarjeta afecta también a las domiciliaciones (cargos recurrentes) o si estas siguen procesándose a pesar del bloqueo.",
+          "No se define si existe un límite de intentos de desbloqueo o si el desbloqueo requiere autenticación adicional (ej. MFA)."
+        ]
+      },
+      "casos": {
+        "casos": [
+          {
+            "id_caso": "CP-RF18-01",
+            "titulo": "Bloqueo temporal de tarjeta exitoso",
+            "tipo": "positivo",
+            "dado": "el cliente tiene una tarjeta activa",
+            "cuando": "el cliente selecciona la opción de bloqueo temporal en la app",
+            "entonces": "el estado de la tarjeta cambia a bloqueada temporalmente",
+            "regla_citada": "REG-RF18-01",
+            "fuente": "qa-05"
+          },
+          {
+            "id_caso": "CP-RF18-02",
+            "titulo": "Rechazo de compra con tarjeta bloqueada",
+            "tipo": "negativo",
+            "dado": "el cliente tiene una tarjeta con bloqueo temporal",
+            "cuando": "el cliente intenta realizar una compra",
+            "entonces": "SUPUESTO: se rechaza la compra con un mensaje de error que debe ser confirmado con el dueño del producto",
+            "regla_citada": "REG-RF18-02"
+          },
+          {
+            "id_caso": "CP-RF18-03",
+            "titulo": "Desbloqueo de tarjeta con bloqueo temporal",
+            "tipo": "limite",
+            "dado": "el cliente tiene una tarjeta con bloqueo temporal",
+            "cuando": "el cliente solicita el desbloqueo desde la app",
+            "entonces": "el estado de la tarjeta cambia a activa",
+            "regla_citada": "REG-RF18-03",
+            "fuente": "qa-05"
+          },
+          {
+            "id_caso": "CP-RF18-04",
+            "titulo": "Intento de desbloqueo de tarjeta con bloqueo definitivo",
+            "tipo": "negativo",
+            "dado": "el cliente tiene una tarjeta con bloqueo por robo",
+            "cuando": "el cliente intenta desbloquear la tarjeta desde la app",
+            "entonces": "la acción de desbloqueo es rechazada y se mantiene el estado de bloqueo definitivo",
+            "regla_citada": "REG-RF18-04"
+          },
+          {
+            "id_caso": "CP-RF18-05",
+            "titulo": "Intento de compra con monto cero en tarjeta bloqueada",
+            "tipo": "monto_cero",
+            "dado": "el cliente tiene una tarjeta con bloqueo temporal",
+            "cuando": "el cliente intenta realizar una compra por 0.00 MXN",
+            "entonces": "SUPUESTO: se rechaza la compra con un mensaje de error que debe ser confirmado con el dueño del producto",
+            "regla_citada": "REG-RF18-02"
+          },
+          {
+            "id_caso": "CP-RF18-06",
+            "titulo": "Intento de compra con monto negativo en tarjeta bloqueada",
+            "tipo": "monto_negativo",
+            "dado": "el cliente tiene una tarjeta con bloqueo temporal",
+            "cuando": "el cliente intenta realizar una compra por -100.00 MXN",
+            "entonces": "SUPUESTO: se rechaza la compra con un mensaje de error que debe ser confirmado con el dueño del producto",
+            "regla_citada": "REG-RF18-02"
+          },
+          {
+            "id_caso": "CP-RF18-07",
+            "titulo": "Intento de compra en el límite de saldo con tarjeta bloqueada",
+            "tipo": "limite_exacto",
+            "dado": "el cliente tiene una tarjeta con bloqueo temporal y un saldo de 500.00 MXN",
+            "cuando": "el cliente intenta realizar una compra por 500.00 MXN",
+            "entonces": "SUPUESTO: se rechaza la compra con un mensaje de error que debe ser confirmado con el dueño del producto",
+            "regla_citada": "REG-RF18-02"
+          },
+          {
+            "id_caso": "CP-RF18-08",
+            "titulo": "Intento de compra excediendo el saldo con tarjeta bloqueada",
+            "tipo": "un_centavo_arriba",
+            "dado": "el cliente tiene una tarjeta con bloqueo temporal y un saldo de 500.00 MXN",
+            "cuando": "el cliente intenta realizar una compra por 500.01 MXN",
+            "entonces": "SUPUESTO: se rechaza la compra con un mensaje de error que debe ser confirmado con el dueño del producto",
+            "regla_citada": "REG-RF18-02"
+          },
+          {
+            "id_caso": "CP-RF18-09",
+            "titulo": "Idempotencia en intento de compra con tarjeta bloqueada",
+            "tipo": "idempotencia",
+            "dado": "el cliente tiene una tarjeta con bloqueo temporal",
+            "cuando": "el cliente intenta realizar la misma compra dos veces con la misma Idempotency-Key",
+            "entonces": "se rechaza la compra en ambos intentos sin procesar cargos adicionales",
+            "regla_citada": "REG-RF18-02"
+          }
+        ]
+      }
+    },
+    {
+      "par": 8,
+      "origen": "av1_D.json · detalle[23] · q02",
+      "v1_en_avance1": "válida al intento 2",
+      "analizar": {
+        "requisito_id": "RF12",
+        "es_operacion_dinero": true,
+        "reglas_negocio": [
+          {
+            "id": "REG-RF12-01",
+            "texto": "La CLABE destino debe ser de exactamente 18 dígitos y contar con un dígito verificador válido."
+          },
+          {
+            "id": "REG-RF12-02",
+            "texto": "El monto mínimo por transferencia es de 1.00 MXN y el máximo es de 8,000 MXN para nivel 1 y 50,000 MXN para nivel 2."
+          },
+          {
+            "id": "REG-RF12-03",
+            "texto": "Se rechazan montos con más de dos decimales."
+          },
+          {
+            "id": "REG-RF12-04",
+            "texto": "Toda transferencia requiere confirmación mediante segundo factor (código de 6 dígitos)."
+          },
+          {
+            "id": "REG-RF12-05",
+            "texto": "El concepto es obligatorio, máximo 40 caracteres, permitiendo solo letras, números y espacios."
+          },
+          {
+            "id": "REG-RF12-06",
+            "texto": "Se debe implementar Idempotency-Key para evitar doble cargo en solicitudes repetidas dentro de 24 horas."
+          },
+          {
+            "id": "REG-RF12-07",
+            "texto": "Las primeras 10 transferencias del mes son gratuitas; a partir de la 11, se cobra una comisión de 5.80 MXN (incluye IVA)."
+          },
+          {
+            "id": "REG-RF12-08",
+            "texto": "La operación se rechaza si el saldo disponible es insuficiente para cubrir el monto de la transferencia más la comisión aplicable."
+          }
+        ],
+        "datos_prueba": [
+          "CLABE: 18 dígitos válidos vs 17 o 19 dígitos (negativa)",
+          "Monto: 0.99 (mínimo negativo), 1.00 (mínimo positivo), 8,000.00 (límite nivel 1), 8,000.01 (exceso nivel 1), 50,000.00 (límite nivel 2), 50,000.01 (exceso nivel 2)",
+          "Decimales: 10.50 (válido), 10.555 (inválido)",
+          "Concepto: 40 caracteres alfanuméricos (válido), 41 caracteres (inválido), uso de caracteres especiales como @ o # (inválido)",
+          "Idempotencia: Enviar misma solicitud con misma Idempotency-Key en < 24h",
+          "Comisiones: Realizar 10 transferencias (sin costo), realizar la 11va (con costo 5.80 MXN)",
+          "Saldo: Intentar transferencia con saldo igual al monto + comisión (válido), saldo menor al monto + comisión (rechazo)"
+        ],
+        "ambiguedades": [
+          "No se especifica el comportamiento del sistema si el segundo factor es incorrecto o expira.",
+          "No se define el mensaje de error específico para el rechazo por saldo insuficiente.",
+          "No se aclara si el límite de 10 transferencias gratuitas se reinicia exactamente el día 1 de cada mes calendario o bajo qué lógica de corte.",
+          "No se especifica el formato técnico de la Idempotency-Key (ej. UUID, string)."
+        ]
+      },
+      "casos": {
+        "casos": [
+          {
+            "id_caso": "CP-RF12-01",
+            "titulo": "Transferencia exitosa con datos válidos",
+            "tipo": "positivo",
+            "dado": "una cuenta nivel 1 con saldo suficiente",
+            "cuando": "realiza una transferencia de 100.00 MXN con concepto 'Pago renta' y CLABE de 18 dígitos válida",
+            "entonces": "se acepta la transferencia",
+            "regla_citada": "REG-RF12-01",
+            "fuente": "qa-02"
+          },
+          {
+            "id_caso": "CP-RF12-02",
+            "titulo": "Rechazo por CLABE con longitud incorrecta",
+            "tipo": "negativo",
+            "dado": "una cuenta nivel 1",
+            "cuando": "intenta transferir con una CLABE de 17 dígitos",
+            "entonces": "se rechaza la transferencia",
+            "regla_citada": "REG-RF12-01"
+          },
+          {
+            "id_caso": "CP-RF12-03",
+            "titulo": "Transferencia en el límite exacto del nivel 1",
+            "tipo": "limite_exacto",
+            "dado": "una cuenta nivel 1 con saldo suficiente",
+            "cuando": "transfiere 8,000.00 MXN",
+            "entonces": "se acepta la transferencia",
+            "regla_citada": "REG-RF12-02",
+            "fuente": "qa-02"
+          },
+          {
+            "id_caso": "CP-RF12-04",
+            "titulo": "Rechazo por monto excedido en nivel 1",
+            "tipo": "un_centavo_arriba",
+            "dado": "una cuenta nivel 1",
+            "cuando": "intenta transferir 8,000.01 MXN",
+            "entonces": "se rechaza con el mensaje 'El monto excede el límite por operación'",
+            "regla_citada": "REG-RF12-02",
+            "fuente": "qa-02"
+          },
+          {
+            "id_caso": "CP-RF12-05",
+            "titulo": "Rechazo por monto cero",
+            "tipo": "monto_cero",
+            "dado": "una cuenta nivel 1",
+            "cuando": "intenta transferir 0.00 MXN",
+            "entonces": "se rechaza la transferencia",
+            "regla_citada": "REG-RF12-02"
+          },
+          {
+            "id_caso": "CP-RF12-06",
+            "titulo": "Rechazo por monto negativo",
+            "tipo": "monto_negativo",
+            "dado": "una cuenta nivel 1",
+            "cuando": "intenta transferir -10.00 MXN",
+            "entonces": "se rechaza la transferencia",
+            "regla_citada": "REG-RF12-02"
+          },
+          {
+            "id_caso": "CP-RF12-07",
+            "titulo": "Validación de idempotencia",
+            "tipo": "idempotencia",
+            "dado": "una solicitud de transferencia enviada con Idempotency-Key 'ABC-123'",
+            "cuando": "se reenvía la misma solicitud con la misma Idempotency-Key 'ABC-123' dentro de las 24 horas",
+            "entonces": "no se genera un segundo cargo",
+            "regla_citada": "REG-RF12-06",
+            "fuente": "qa-02"
+          },
+          {
+            "id_caso": "CP-RF12-08",
+            "titulo": "Rechazo por concepto con caracteres especiales",
+            "tipo": "limite",
+            "dado": "una cuenta nivel 1",
+            "cuando": "intenta transferir con el concepto 'Pago@Renta'",
+            "entonces": "se rechaza la transferencia",
+            "regla_citada": "REG-RF12-05",
+            "fuente": "qa-02"
+          },
+          {
+            "id_caso": "CP-RF12-09",
+            "titulo": "Rechazo por saldo insuficiente para monto y comisión",
+            "tipo": "negativo",
+            "dado": "una cuenta con saldo de 100.00 MXN y 10 transferencias previas en el mes",
+            "cuando": "intenta transferir 95.00 MXN",
+            "entonces": "SUPUESTO: se rechaza la operación, falta confirmar el mensaje de error específico con el dueño del producto",
+            "regla_citada": "REG-RF12-08",
+            "fuente": "qa-04"
+          }
+        ]
+      }
+    }
+  ]
+}
