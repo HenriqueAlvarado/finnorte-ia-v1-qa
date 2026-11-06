@@ -6,3 +6,6 @@ bitacora/emb_*.npy
 .venv/
 .DS_Store
 *.egg-info/
+
+# Trazas locales: pueden contener datos sensibles
+/bitacora/trazas.jsonl
