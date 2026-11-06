@@ -23,7 +23,11 @@ from pathlib import Path
 
 from . import controles
 from .config import RAIZ
+from .etapa_analizar import validar_analizar
+from .etapa_casos import casos_cubren_qa08
+from .etapa_pytest import pytest_compila_y_cubre
 from .pipeline import Etapa, Pipeline
+from .qa_revisar import validar_revisar
 from .retrieval import Indice, contexto_para_prompt
 
 VARIANTE = "v1-qa"
@@ -47,13 +51,22 @@ def leer_entrada(entrada: dict) -> str:
     raise ValueError(f"Entrada sin campo reconocido: {list(entrada)}")
 
 
-# TODO(A2): define tus etapas. Ejemplo para v1-qa:
-#   Etapa("analizar", "qa_analizar"), Etapa("casos", "qa_casos", usa=["analizar"]),
-#   Etapa("revisar", "qa_revisar", usa=["analizar", "casos"]), Etapa("pytest", "qa_pytest", usa=["casos"])
-FLUJO = Pipeline([], nombre=VARIANTE)
+# A2 · Las 4 etapas del equipo. Cada una valida contra su esquema (en el prompt) y con su regla
+# de negocio (validar=). Sin version=, cada etapa usa su prompt más reciente:
+# qa_analizar v2, qa_casos v2, qa_revisar v1, qa_pytest v3.
+def _etapas(version: int | None = None) -> list[Etapa]:
+    return [
+        Etapa("analizar", "qa_analizar", version=version, validar=validar_analizar),
+        Etapa("casos", "qa_casos", version=version, usa=["analizar"], validar=casos_cubren_qa08),
+        Etapa("revisar", "qa_revisar", version=version, usa=["analizar", "casos"], validar=validar_revisar),
+        Etapa("pytest", "qa_pytest", version=version, usa=["casos"], validar=pytest_compila_y_cubre),
+    ]
+
+
+FLUJO = Pipeline(_etapas(), nombre=VARIANTE)
 # Avance 1 · para comparar v1 contra v2 define también FLUJO_V1 con las mismas etapas y version=1
 # (o pasa version=... a cada Etapa). Si no lo defines, se usa FLUJO para las dos configuraciones.
-FLUJO_V1: Pipeline | None = None
+FLUJO_V1: Pipeline | None = Pipeline(_etapas(version=1), nombre=f"{VARIANTE}-v1")
 
 # Configuración del motor. guia/av1_configuraciones.py la cambia para medir A, B, C y D.
 CONFIG_POR_DEFECTO = {
