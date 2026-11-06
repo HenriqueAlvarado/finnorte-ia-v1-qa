@@ -6,8 +6,8 @@
 | Campo | Valor |
 |---|---|
 | Equipo | |
-| Variante | v?- |
-| Repositorio | https://github.com/... |
+| Variante | v1-qa |
+| Repositorio | https://github.com/HenriqueAlvarado/finnorte-ia-v1-qa |
 | Canal de comunicación | |
 | Horario fijo de trabajo semanal | |
 
@@ -16,20 +16,20 @@ Los roles **rotan en cada entrega**; todos programan.
 
 | Integrante | Usuario de GitHub | Rol Avance 1 | Rol Avance 2 | Rol Final |
 |---|---|---|---|---|
-| | | Integración (`sistema()`, fusión de ramas) | | |
-| | | Evaluación (casos, contrato, configuraciones A–D) | | |
-| | | Prompts y flujo (v1/v2, esquemas, reglas) | | |
-| | | Documento y evidencia (PDF, bitácoras) | | |
+| Henrique | HenriqueAlvarado | Integración (`sistema()`, fusión de ramas) | | |
+| Luis | oft24 | Evaluación (casos, contrato, configuraciones A–D) | | |
+| Caro (Monserrat) | Monsecode | Prompts y flujo (v1/v2, esquemas, reglas) | | |
+| Gera | GeraEsc | Documento y evidencia (PDF, bitácoras) | | |
 
 ## Dueños de etapa del flujo (A2 · individual)
 Cada integrante es dueño de **una** etapa: su prompt v1 y esquema, su validación en código (`validar=`) y su v2 medida.
 
 | Etapa | Nombre en `FLUJO` | Prompt (`prompts/<id>.v1.md`) | Dueño (integrante) | Usuario de GitHub |
 |---|---|---|---|---|
-| 1 | | | | |
-| 2 | | | | |
-| 3 | | | | |
-| 4 | | | | |
+| 1 | `analizar` | `prompts/qa_analizar.v1.md` | Gera | GeraEsc |
+| 2 | `casos` | `prompts/qa_casos.v1.md` | Caro (Monserrat) | Monsecode |
+| 3 | `revisar` | `prompts/qa_revisar.v1.md` | Henrique | HenriqueAlvarado |
+| 4 | `pytest` | `prompts/qa_pytest.v1.md` | Luis | oft24 |
 
 ## Reglas de trabajo
 - Nadie sube directo a `main`: rama → pull request → una aprobación → fusionar.
