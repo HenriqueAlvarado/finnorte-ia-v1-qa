@@ -1,0 +1,110 @@
+[
+  {
+    "corrida": "RF12",
+    "es_dinero": true,
+    "analizar_ok": true,
+    "casos_ok": true,
+    "casos_intentos": 1,
+    "casos_errores": [],
+    "n_casos": 9,
+    "tipos": {
+      "positivo": 1,
+      "negativo": 2,
+      "limite_exacto": 1,
+      "limite": 1,
+      "monto_cero": 1,
+      "monto_negativo": 1,
+      "un_centavo_arriba": 1,
+      "idempotencia": 1
+    },
+    "faltan_segun_etapa3": [],
+    "fuente_llenada": 0,
+    "supuestos": 5
+  },
+  {
+    "corrida": "RF07",
+    "es_dinero": false,
+    "analizar_ok": true,
+    "casos_ok": true,
+    "casos_intentos": 1,
+    "casos_errores": [],
+    "n_casos": 4,
+    "tipos": {
+      "positivo": 1,
+      "negativo": 2,
+      "limite": 1
+    },
+    "faltan_segun_etapa3": [],
+    "fuente_llenada": 0,
+    "supuestos": 4
+  },
+  {
+    "corrida": "RF18",
+    "es_dinero": true,
+    "analizar_ok": true,
+    "casos_ok": true,
+    "casos_intentos": 1,
+    "casos_errores": [],
+    "n_casos": 8,
+    "tipos": {
+      "positivo": 1,
+      "negativo": 1,
+      "limite": 1,
+      "limite_exacto": 1,
+      "monto_cero": 1,
+      "monto_negativo": 1,
+      "un_centavo_arriba": 1,
+      "idempotencia": 1
+    },
+    "faltan_segun_etapa3": [],
+    "fuente_llenada": 0,
+    "supuestos": 2
+  },
+  {
+    "corrida": "RF12 rep2",
+    "es_dinero": true,
+    "analizar_ok": true,
+    "casos_ok": true,
+    "casos_intentos": 1,
+    "casos_errores": [],
+    "n_casos": 8,
+    "tipos": {
+      "positivo": 1,
+      "negativo": 1,
+      "limite_exacto": 1,
+      "limite": 1,
+      "monto_cero": 1,
+      "monto_negativo": 1,
+      "un_centavo_arriba": 1,
+      "idempotencia": 1
+    },
+    "faltan_segun_etapa3": [],
+    "fuente_llenada": 0,
+    "supuestos": 3
+  },
+  {
+    "corrida": "RF12 rep3",
+    "es_dinero": true,
+    "analizar_ok": true,
+    "casos_ok": false,
+    "casos_intentos": 2,
+    "casos_errores": [
+      "Faltan tipos de caso exigidos por qa-08: un_centavo_arriba"
+    ],
+    "n_casos": 9,
+    "tipos": {
+      "positivo": 2,
+      "negativo": 2,
+      "limite_exacto": 1,
+      "limite": 1,
+      "monto_cero": 1,
+      "monto_negativo": 1,
+      "idempotencia": 1
+    },
+    "faltan_segun_etapa3": [
+      "un_centavo_arriba"
+    ],
+    "fuente_llenada": 0,
+    "supuestos": 2
+  }
+]
