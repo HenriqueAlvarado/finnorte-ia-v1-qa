@@ -1,0 +1,110 @@
+[
+  {
+    "solicitud": "CHG-1",
+    "etapa": "analizar",
+    "prompt": "cambio_analizar.v1",
+    "version": 1,
+    "valida": true,
+    "intentos": 1,
+    "errores": []
+  },
+  {
+    "solicitud": "CHG-1",
+    "etapa": "plan",
+    "prompt": "cambio_plan.v2",
+    "version": 2,
+    "valida": true,
+    "intentos": 1,
+    "errores": []
+  },
+  {
+    "solicitud": "CHG-1",
+    "etapa": "checklist",
+    "prompt": "cambio_checklist.v1",
+    "version": 1,
+    "valida": true,
+    "intentos": 1,
+    "errores": []
+  },
+  {
+    "solicitud": "CHG-1",
+    "etapa": "nota",
+    "prompt": "cambio_nota.v1",
+    "version": 1,
+    "valida": true,
+    "intentos": 1,
+    "errores": []
+  },
+  {
+    "solicitud": "CHG-2",
+    "etapa": "analizar",
+    "prompt": "cambio_analizar.v1",
+    "version": 1,
+    "valida": true,
+    "intentos": 1,
+    "errores": []
+  },
+  {
+    "solicitud": "CHG-2",
+    "etapa": "plan",
+    "prompt": "cambio_plan.v2",
+    "version": 2,
+    "valida": true,
+    "intentos": 1,
+    "errores": []
+  },
+  {
+    "solicitud": "CHG-2",
+    "etapa": "checklist",
+    "prompt": "cambio_checklist.v1",
+    "version": 1,
+    "valida": true,
+    "intentos": 1,
+    "errores": []
+  },
+  {
+    "solicitud": "CHG-2",
+    "etapa": "nota",
+    "prompt": "cambio_nota.v1",
+    "version": 1,
+    "valida": true,
+    "intentos": 1,
+    "errores": []
+  },
+  {
+    "solicitud": "CHG-3",
+    "etapa": "analizar",
+    "prompt": "cambio_analizar.v1",
+    "version": 1,
+    "valida": true,
+    "intentos": 1,
+    "errores": []
+  },
+  {
+    "solicitud": "CHG-3",
+    "etapa": "plan",
+    "prompt": "cambio_plan.v2",
+    "version": 2,
+    "valida": true,
+    "intentos": 1,
+    "errores": []
+  },
+  {
+    "solicitud": "CHG-3",
+    "etapa": "checklist",
+    "prompt": "cambio_checklist.v1",
+    "version": 1,
+    "valida": true,
+    "intentos": 1,
+    "errores": []
+  },
+  {
+    "solicitud": "CHG-3",
+    "etapa": "nota",
+    "prompt": "cambio_nota.v1",
+    "version": 1,
+    "valida": true,
+    "intentos": 1,
+    "errores": []
+  }
+]
