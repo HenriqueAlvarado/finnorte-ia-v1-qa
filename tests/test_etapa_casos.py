@@ -81,7 +81,12 @@ def test_regla_citada_inexistente_y_id_repetido():
 def test_bloquea_datos_reales_de_qa10():
     malo = copy.deepcopy(COMPLETO)
     malo["casos"][0]["dado"] = "la clienta Mariana Ortega Lugo con CLABE 002180700000000019"
-    assert any("qa-10" in e for e in casos_cubren_qa08(malo, {"analizar": ANALISIS}))
+    errores = casos_cubren_qa08(malo, {"analizar": ANALISIS})
+    assert any("qa-10" in e for e in errores)
+    # El mensaje de error no debe repetir ni un fragmento del dato real (queda en trazas y se reenvía al modelo).
+    texto_errores = " ".join(errores).lower()
+    for fragmento in ("002180", "mariana", "ortega", "mariana.ortega", "5550", "7788"):
+        assert fragmento not in texto_errores
 
 
 def test_entonces_vago_se_rechaza_y_supuesto_se_permite():

@@ -75,7 +75,9 @@ def casos_cubren_qa08(salida: Any, previas: dict) -> list[str]:
         texto = " ".join(str(v) for v in c.values()).lower()
         for dato in DATOS_PROHIBIDOS:
             if dato.lower() in texto:
-                errores.append(f"{id_caso}: usa datos reales de qa-10 ({dato[:12]}…); usa datos sintéticos")
+                # El mensaje NO incluye ni un fragmento del dato: queda en la bitácora y se reenvía al modelo.
+                errores.append(f"{id_caso}: usa datos reales de qa-10 (nombre, correo, teléfono o CLABE de la clienta "
+                               "del ejemplo); usa datos sintéticos")
                 break
 
     # v2: alineado con qa_revisar (etapa 3): en dinero se exigen los 8 tipos, incluido "limite" a secas.
