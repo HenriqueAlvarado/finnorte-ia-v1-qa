@@ -11,7 +11,7 @@
 | Prompt | `prompts/qa_pytest.v1.md`, `v2.md` y `v3.md` (el flujo usa la más reciente) |
 | Recibe (`usa=`) | `["casos"]`: la lista de la etapa 2 (`id_caso`, `titulo`, `tipo`, `dado`, `cuando`, `entonces`, `regla_citada`) |
 | Entrega (esquema) | `nombre_archivo` (`^test_[a-z0-9_]+\.py$`) y `codigo_pytest`, con `additionalProperties: false` |
-| Conexión | `Etapa("pytest", "qa_pytest", usa=["casos"], validar=pytest_compila_y_cubre)` |
+| Conexión | `Etapa("pytest", "qa_pytest", usa=["casos"], validar=pytest_compila_y_cubre)`, integrada en `FLUJO` con la v3 y en `FLUJO_V1` con la v1 (PR #12) |
 
 **Cómo ayuda:** convierte los casos Dado/Cuando/Entonces en un archivo pytest que compila y corre. Cada test se rastrea a su caso, a su requisito (`@RFxx`) y a la regla de negocio de la que sale.
 

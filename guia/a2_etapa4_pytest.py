@@ -1,4 +1,4 @@
-"""A2 · Etapa 4 (qa_pytest): mide la v1 contra la v2 con LOS MISMOS casos de entrada.
+"""A2 · Etapa 4 (qa_pytest): compara dos versiones del prompt con LOS MISMOS casos de entrada.
 
     python guia/a2_etapa4_pytest.py            # mide la v1 y la v2 (usa los casos congelados si existen)
     python guia/a2_etapa4_pytest.py --nuevos   # vuelve a generar los casos con las etapas 1 y 2

@@ -3,11 +3,13 @@
 # Riesgo de la variante: un caso de prueba falso deja pasar un defecto a producción,
 # y un dato real en un caso de prueba es una fuga (qa-08: "Datos: siempre sintéticos").
 # Cada número se justifica en el documento, sección 10 «Pruebas y validación».
-# BORRADOR: revisar las metas después de la pasada 2 (gemini, --rep 1).
+# Metas fijadas ANTES de medir; no se cambiaron después para que pasaran.
+# Medido el 2026-11-06 (A–D, 3 repeticiones, bitacora/av1_*.json): ninguna configuración cumple;
+# lectura y propuesta para el Avance 2 en bitacora/luis/evaluacion_avance1.md §2.
 
 equipo: "Equipo 1"
 variante: "v1-qa"
-proveedor: "gemini / gemini-3.1-flash-lite"   # CONFIRMAR con el equipo: el modelo con el que se corra la medición final
+proveedor: "gemini / gemini-3.1-flash-lite"   # el modelo con el que se midieron las 4 configuraciones
 fecha: "2026-11-06"
 metas:
   exactitud_min: 0.80            # alto: un caso con valor equivocado (p. ej. 8,000 en vez de 50,000) aprueba código defectuoso
