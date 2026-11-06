@@ -40,7 +40,7 @@ Cada integrante es dueño de **una** etapa: su prompt v1 y esquema, su validaci�
 ## Decisión de fusión (Avance 1)
 | Pieza | Opciones (de quién) | Elegida | Evidencia que la justifica |
 |---|---|---|---|
-| Buscador (A1) | Los 4 buscadores de la A1 individual (Henrique, Gera, Caro y Luis) | El de Henrique (commit `fa3e909`, `src/finnorte/retrieval.py`), que es el que se integró al flujo | **Comparación cualitativa del equipo, no una medición con datos.** El equipo comparó los 4 buscadores a mano: tres quedaron prácticamente empatados y uno dio un punto menos. Con ese resultado, Henrique propuso usar el suyo y el equipo lo aceptó. **Limitación:** no se corrió acierto@3 sobre un conjunto de preguntas común (`evals/` solo tiene la plantilla `a1_plantilla.jsonl`), así que no hay un número que respalde la elección. |
+| Buscador (A1) | Los 4 buscadores de la A1 individual (Henrique, Gera, Caro y Luis) | El de Henrique (commit `fa3e909`, `src/finnorte/retrieval.py`), que es el que se integró al flujo | **Comparación cualitativa del equipo, no una medición con datos.** El equipo comparó los 4 buscadores a mano: tres quedaron prácticamente empatados y uno dio un punto menos. Como los empatados eran equivalentes, elegir cualquiera de ellos no cambiaba el resultado: Henrique propuso usar el suyo y el equipo lo aceptó, sin otro criterio de desempate. **Limitación:** no se corrió acierto@3 sobre un conjunto de preguntas común (`evals/` solo tiene la plantilla `a1_plantilla.jsonl`), así que no hay un número que respalde la elección. |
 | Flujo (A2) | | | validaciones y consistencia en `bitacora/`: |
 | Prompts | | | |
 
