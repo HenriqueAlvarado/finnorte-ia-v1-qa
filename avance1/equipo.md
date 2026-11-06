@@ -5,11 +5,11 @@
 ## Datos
 | Campo | Valor |
 |---|---|
-| Equipo | |
+| Equipo | finnorte-ia-v1-qa |
 | Variante | v1-qa |
 | Repositorio | https://github.com/HenriqueAlvarado/finnorte-ia-v1-qa |
-| Canal de comunicación | |
-| Horario fijo de trabajo semanal | |
+| Canal de comunicación | Discord y WhatsApp |
+| Horario fijo de trabajo semanal | 7:30 p.m. a 10:00 p.m. |
 
 ## Integrantes y roles
 Los roles **rotan en cada entrega**; todos programan.
