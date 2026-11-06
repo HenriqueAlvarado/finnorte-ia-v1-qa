@@ -5,6 +5,9 @@ from __future__ import annotations
 import re
 from typing import Any
 
+from . import pii
+from .etapa_casos import DATOS_PROHIBIDOS
+
 
 def validar_analizar(datos: Any, salidas: dict) -> list[str]:
     """Valida las reglas de negocio producidas por qa_analizar.
@@ -49,5 +52,38 @@ def validar_analizar(datos: Any, salidas: dict) -> list[str]:
 
         if not str(regla.get("texto", "")).strip():
             errores.append(f"{identificador}: falta el texto de la regla")
+
+
+    # Seguridad: la etapa analizar tampoco debe aceptar datos personales
+    # como datos de prueba. No reproducir valores en mensajes de error.
+    datos_prueba = datos.get("datos_prueba", [])
+
+    if isinstance(datos_prueba, list):
+        for indice, elemento in enumerate(datos_prueba, start=1):
+            contenido = str(elemento)
+
+            # Detector general: CLABE, correo, telefono, etc.
+            tiene_pii = pii.contiene_pii(contenido)
+
+            # Proteccion especifica del corpus qa-10, incluida la
+            # comparacion de identificadores numericos con separadores.
+            contenido_normalizado = contenido.casefold()
+            digitos = re.sub(r"\D", "", contenido)
+
+            contiene_qa10 = any(
+                prohibido.casefold() in contenido_normalizado
+                or (
+                    len(re.sub(r"\D", "", prohibido)) >= 10
+                    and re.sub(r"\D", "", prohibido) in digitos
+                )
+                for prohibido in DATOS_PROHIBIDOS
+            )
+
+            if tiene_pii or contiene_qa10:
+                errores.append(
+                    f"datos_prueba[{indice}]: contiene datos personales "
+                    "o datos reales de qa-10; utiliza datos sinteticos "
+                    "o marcadores simbolicos"
+                )
 
     return errores
