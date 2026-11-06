@@ -32,15 +32,28 @@ RESPUESTA_ABSTENCION = "No encuentro esa información en la documentación dispo
 
 
 def verificar_citas(fuentes_citadas: Iterable[str], recuperados: list[Resultado]) -> list[str]:
-    """Errores por citas inventadas o ausentes. Acepta 'doc#n' o solo 'doc'."""
-    # TODO(AV1): implementa esta parte (ver docstring y pruebas)
-    raise NotImplementedError("Pendiente: AV1")
+    """Errores por citas inventadas o ausentes. Acepta 'doc#n' o solo 'doc'.
+
+    - 'doc#n' es válida si ese fragmento exacto se recuperó; 'doc', si se recuperó algún fragmento de ese documento.
+    - Una cita que no se recuperó da un error con «no recuperada» (la evaluación lo cuenta como alucinación).
+    - No citar nada también es un error, pero distinto: no es una alucinación.
+    """
+    fragmentos = {r.fragmento.id for r in recuperados}
+    documentos = {r.fragmento.doc_id for r in recuperados}
+    citas = [str(f).strip().removeprefix("doc:") for f in fuentes_citadas if str(f).strip()]
+    if not citas:
+        return ["no citó ninguna fuente"]
+    errores = []
+    for cita in citas:
+        valida = cita in fragmentos if "#" in cita else cita in documentos
+        if not valida:
+            errores.append(f"cita no recuperada: {cita}")
+    return errores
 
 
 def debe_abstenerse(recuperados: list[Resultado], umbral: float) -> bool:
-    """True si no hay contexto suficiente para responder."""
-    # TODO(AV1): implementa esta parte (ver docstring y pruebas)
-    raise NotImplementedError("Pendiente: AV1")
+    """True si no hay contexto suficiente para responder: nada recuperado, o ningún fragmento llega al umbral."""
+    return not recuperados or max(r.puntaje for r in recuperados) < umbral
 
 
 def filtrar_clasificacion(recuperados: list[Resultado], permitidas=("publica", "interna")) -> list[Resultado]:
