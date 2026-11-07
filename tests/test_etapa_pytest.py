@@ -159,3 +159,14 @@ class TestRF12:
 def test_error_de_sintaxis_dice_la_linea():
     errores = pytest_compila_y_cubre(_salida("def test_cp_rf12_01(:\n    pass\n"), PREVIAS)
     assert len(errores) == 1 and errores[0].startswith("codigo_pytest no compila: línea 1")
+
+
+def test_funcion_repetida_se_detecta():
+    repetida = '''
+
+def test_cp_rf12_01(sistema):
+    """REG-RF12-01"""
+    assert sistema.transferir(Decimal("1.00")) == "aceptada"
+'''
+    errores = pytest_compila_y_cubre(_salida(CODIGO_OK + repetida), PREVIAS)
+    assert errores == ["codigo_pytest define dos veces test_cp_rf12_01: pytest solo correría la última"]

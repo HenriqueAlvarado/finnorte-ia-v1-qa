@@ -17,7 +17,9 @@ Reglas (código, no modelo):
   8. cada test prueba al sistema: llama a `sistema.<algo>(...)` y su assert (o su
      `pytest.raises`) revisa ese resultado. Un assert sobre valores locales no puede fallar;
   9. sin datos con forma de PII (correo, número de 18 dígitos, teléfono de 10): los datos
-     sintéticos van como marcadores <CORREO_SINTETICO_1>, <CLABE_VALIDA_1>… (qa-08).
+     sintéticos van como marcadores <CORREO_SINTETICO_1>, <CLABE_VALIDA_1>… (qa-08);
+ 10. no hay dos funciones con el mismo nombre: Python se queda con la última y pytest
+     nunca corre la primera, así que un caso desaparece sin aviso.
 """
 from __future__ import annotations
 
@@ -120,6 +122,11 @@ def pytest_compila_y_cubre(salida: Any, previas: dict) -> list[str]:
     funciones = {n.name: n for n in ast.walk(arbol) if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))}
     if not any(nombre.startswith("test_") for nombre in funciones):
         errores.append("codigo_pytest no tiene ninguna función test_")
+
+    nombres = [n.name for n in ast.walk(arbol) if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))]
+    repetidos = sorted({n for n in nombres if n.startswith("test_") and nombres.count(n) > 1})
+    if repetidos:
+        errores.append(f"codigo_pytest define dos veces {', '.join(repetidos)}: pytest solo correría la última")
 
     casos = _lista_casos(previas)
     for caso in casos:
