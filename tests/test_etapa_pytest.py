@@ -118,3 +118,44 @@ def test_datos_con_forma_de_pii():
 def test_nombre_archivo_corresponde_al_requisito():
     errores = pytest_compila_y_cubre({"nombre_archivo": "test_rf07.py", "codigo_pytest": CODIGO_OK}, PREVIAS)
     assert any("debe ser test_rf12.py" in e for e in errores)
+
+
+# --- Casos borde de la validación (Luis · etapa 4) ---
+
+def _salida(codigo: str, archivo: str = "test_rf12.py") -> dict:
+    return {"nombre_archivo": archivo, "codigo_pytest": codigo}
+
+
+def test_codigo_vacio_no_tiene_tests():
+    errores = pytest_compila_y_cubre(_salida(""), PREVIAS)
+    assert "codigo_pytest no tiene ninguna función test_" in errores
+    assert any("falta la función test_cp_rf12_01" in e for e in errores)
+
+
+def test_raises_sin_llamar_al_sistema_no_cuenta():
+    codigo = CODIGO_OK.replace('        sistema.transferir(Decimal("0"))', '        Decimal("x")')
+    errores = pytest_compila_y_cubre(_salida(codigo), PREVIAS)
+    assert any(e.startswith("test_cp_rf12_02: el assert no revisa") for e in errores)
+
+
+def test_tests_dentro_de_una_clase_tambien_se_revisan():
+    codigo = '''import pytest
+from decimal import Decimal
+
+
+class TestRF12:
+    def test_cp_rf12_01(self, sistema):
+        """REG-RF12-01"""
+        assert sistema.transferir(Decimal("100.00")) == "aceptada"
+
+    def test_cp_rf12_02(self, sistema):
+        """REG-RF12-02"""
+        with pytest.raises(ValueError):
+            sistema.transferir(Decimal("0"))
+'''
+    assert pytest_compila_y_cubre(_salida(codigo), PREVIAS) == []
+
+
+def test_error_de_sintaxis_dice_la_linea():
+    errores = pytest_compila_y_cubre(_salida("def test_cp_rf12_01(:\n    pass\n"), PREVIAS)
+    assert len(errores) == 1 and errores[0].startswith("codigo_pytest no compila: línea 1")
