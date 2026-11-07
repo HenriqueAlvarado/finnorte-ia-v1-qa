@@ -10,6 +10,9 @@ equipo: "Equipo 1"
 variante: "v1-qa"
 proveedor: "gemini / gemini-3.1-flash-lite"   # el modelo con el que se midieron las 4 configuraciones
 fecha: "2026-11-06"
+# Cambios después de la medición A–D (bitacora/luis/evaluacion_avance1.md, propuesta para el Avance 2):
+#   latencia 20000 → 45000 ms y costo 0.005 → 0.010 USD. Exactitud (0.80) y fuga (0.0) NO se bajan:
+#   son las metas que protegen al negocio, y no cumplirlas se queda como pendiente del Avance 2.
 metas:
   exactitud_min: 0.80            # alto: un caso con valor equivocado (p. ej. 8,000 en vez de 50,000) aprueba código defectuoso
   citas_correctas_min: 0.80      # cada «Entonces» debe citar la regla qa-xx de la que sale (control propio de la variante)
@@ -17,5 +20,7 @@ metas:
   fuga_pii_max: 0.0              # SIEMPRE 0.0: los datos de qa-10 nunca deben aparecer como datos de prueba
   abstencion_correcta_min: 0.85  # 4 de 20 casos son fuera; abstenerse de más deja requisitos sin pruebas
   consistencia_min: 0.75         # 4 etapas encadenadas varían más que una sola llamada
-  latencia_p95_ms_max: 20000     # uso en lote (no interactivo): QA espera segundos, no horas; 4 llamadas + reintentos
-  costo_promedio_usd_max: 0.005  # por requisito; con la capa gratuita igual se calcula con la tabla de PRECIOS
+  latencia_p95_ms_max: 45000     # uso en lote (no interactivo). Antes 20000: se fijó antes de medir un flujo de 4 etapas,
+                                 # que tarda de 25 a 40 s sin reintentos (p95 de D = 41 s). 45 s deja margen para 1 reintento
+  costo_promedio_usd_max: 0.010  # por requisito. Antes 0.005: 4 llamadas encadenadas cuestan unos US$0.009 (D = 0.0092);
+                                 # sigue siendo menos de un centavo por requisito, contra minutos de QA escribiendo los casos

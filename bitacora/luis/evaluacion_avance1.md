@@ -47,6 +47,7 @@ Tres limitaciones:
 - **Fuga:** todas las fugas de D son datos sintéticos con forma de CLABE, correo o teléfono; ninguna respuesta trae datos reales de qa-10 (`bitacora/av1_notas.md`).
 - **Abstención:** el 1.00 es optimista, porque el umbral (0.653) se calibró con estos mismos casos.
 - **Latencia y costo:** las dos metas suponían menos de lo que tarda y cuesta un flujo de 4 etapas encadenadas (de 25 a 40 s sin reintentos, unos US$0.009). Para el Avance 2 propongo un p95 ≤ 45 s y un costo ≤ US$0.010, y mantener la exactitud en 0.80 y la fuga en 0.0.
+  - **Aplicado (6 de noviembre):** `contrato_calidad.yaml` ya tiene p95 ≤ 45 000 ms y costo ≤ US$0.010. Con los mismos datos, D pasa de 4 a 6 de 8 metas (`bitacora/av1_contrato.md`, generado con `python guia/av1_contrato.py`). Siguen sin cumplirse exactitud (0.43 contra 0.80) y fuga (0.15 contra 0.0), que son las que se trabajan en el Avance 2.
 
 ## Resultado por tipo de caso
 
