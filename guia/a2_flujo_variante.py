@@ -5,6 +5,8 @@
     python guia/a2_flujo_variante.py --version 1            # usa FLUJO_V1 (todos los prompts en v1)
     python guia/a2_flujo_variante.py --sin-contexto         # sin RAG, para aislar el efecto del corpus
     python guia/a2_flujo_variante.py --rep 2 --agregar      # agrega 2 repeticiones a la matriz que ya existe
+    python guia/a2_flujo_variante.py --requisitos RF07,RF12,RF15   # 3 entradas distintas, 1 vez cada una
+                                                            # → bitacora/a2_matriz_entradas.md (no toca a2_matriz.md)
     LLM_PROVIDER=fake python guia/a2_flujo_variante.py      # sin red: solo prueba la plomería
 
 Qué hace
@@ -41,6 +43,8 @@ VERSION = _arg("--version", "")
 FLUJO_USADO = FLUJO_V1 if (VERSION == "1" and FLUJO_V1) else FLUJO
 SALIDA = RAIZ / "bitacora" / "a2_matriz.md"
 AGREGAR = "--agregar" in sys.argv     # conserva las repeticiones completas de la matriz anterior
+REQUISITOS = [r.strip() for r in _arg("--requisitos", "").split(",") if r.strip()]
+SALIDA_ENTRADAS = RAIZ / "bitacora" / "a2_matriz_entradas.md"
 K = 4
 
 
@@ -153,7 +157,62 @@ def leer_matriz(ruta: Path, ruta_req: Path) -> list[dict]:
     return [x for x in corridas.values() if "ok" in x]
 
 
+def correr_una(texto: str, contexto: str) -> dict:
+    """Una pasada del flujo; los errores del proveedor (429/503) se registran y no detienen el script."""
+    t0 = time.perf_counter()
+    try:
+        r = FLUJO_USADO.ejecutar({"entrada": texto, "contexto": contexto})
+    except Exception as exc:
+        return {"error_proveedor": f"{type(exc).__name__}: {exc}"[:300]}
+    etapas = [{"etapa": e.nombre, "prompt": e.prompt, "ok": e.ok, "intentos": e.intentos,
+               "errores": e.errores, "latencia_ms": e.latencia_ms, "costo_usd": e.costo_usd,
+               "artefacto": resumen_artefacto(e.nombre, e.salida)} for e in r.etapas]
+    return {"ok": r.ok, "etapas": etapas, "costo_usd": r.costo_usd,
+            "latencia_ms": (time.perf_counter() - t0) * 1000}
+
+
+def main_entradas() -> None:
+    """Checkpoint del Lab 2: 3 entradas distintas recorren las 4 etapas (la consistencia queda en a2_matriz.md)."""
+    print(f"flujo {FLUJO_USADO.nombre} | modelo {modelo()} | entradas {', '.join(REQUISITOS)} | "
+          f"contexto {'si' if USAR_CONTEXTO else 'no'}")
+    filas, corridas = [], []
+    for rf in REQUISITOS:
+        ruta_req = ruta_requisito(rf)
+        texto = ruta_req.read_text(encoding="utf-8")
+        x = correr_una(texto, contexto_de(texto))
+        x["entrada"] = rf
+        corridas.append(x)
+        if x.get("error_proveedor"):
+            print(f"  {rf}: error del proveedor | {x['error_proveedor'][:200]}")
+            filas.append(f"| {rf} | — | — | — | error del proveedor | — | — | — | {corta(x['error_proveedor'])} |")
+            continue
+        print(f"  {rf}: {'completo' if x['ok'] else 'SE DETUVO'} | {len(x['etapas'])}/{len(FLUJO_USADO.etapas)} etapas")
+        for e in x["etapas"]:
+            print(f"      {e['etapa']:9} {'ok ' if e['ok'] else 'FALLA'} intentos={e['intentos']} {e['artefacto']}")
+            filas.append(f"| {rf} | {e['etapa']} | {e['prompt']} | {e['artefacto']} | {'✓' if e['ok'] else '✗'} | "
+                         f"{e['intentos']} | {e['latencia_ms']:.0f} | {e['costo_usd']:.6f} | "
+                         f"{corta('; '.join(e['errores']) or '—')} |")
+    hechas = [x for x in corridas if not x.get("error_proveedor")]
+    primer_intento = sum(e["intentos"] == 1 and e["ok"] for x in hechas for e in x["etapas"])
+    total_etapas = sum(len(x["etapas"]) for x in hechas)
+    c = [f"# Matriz del flujo completo con 3 entradas · {VARIANTE}", "",
+         f"Modelo: {modelo()} · entradas: {', '.join(REQUISITOS)} (datos/{VARIANTE}/requisitos/) · "
+         f"contexto (RAG): {'sí, k=' + str(K) if USAR_CONTEXTO else 'no'} · flujo: {FLUJO_USADO.nombre}", "",
+         "Checkpoint 5 del Lab 2: cada entrada recorre las 4 etapas con su esquema y su `validar=`. "
+         "La consistencia (RF12 × 3) está en `bitacora/a2_matriz.md`.", "",
+         "| Entrada | Etapa | Prompt | Artefacto | Válida | Intentos | ms | USD | Errores |",
+         "|---|---|---|---|---|---|---|---|---|", *filas, "",
+         f"Flujos completos: {sum(x['ok'] for x in hechas)}/{len(corridas)} · "
+         f"etapas válidas al primer intento: {primer_intento}/{total_etapas} · "
+         f"errores del proveedor: {len(corridas) - len(hechas)} · "
+         f"costo total: {sum(x.get('costo_usd', 0.0) for x in hechas):.6f} USD"]
+    SALIDA_ENTRADAS.write_text("\n".join(c) + "\n", encoding="utf-8")
+    print(f"\nmatriz: {SALIDA_ENTRADAS.relative_to(RAIZ).as_posix()}")
+
+
 def main() -> None:
+    if REQUISITOS:
+        return main_entradas()
     ruta_req = ruta_requisito(REQUISITO)
     texto = ruta_req.read_text(encoding="utf-8")
     contexto = contexto_de(texto)
