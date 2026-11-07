@@ -170,3 +170,12 @@ def test_cp_rf12_01(sistema):
 '''
     errores = pytest_compila_y_cubre(_salida(CODIGO_OK + repetida), PREVIAS)
     assert errores == ["codigo_pytest define dos veces test_cp_rf12_01: pytest solo correría la última"]
+
+
+def test_supuesto_se_conserva_en_el_test():
+    previas = {"casos": {"casos": [dict(c) for c in PREVIAS["casos"]["casos"]]}}
+    previas["casos"]["casos"][0]["entonces"] = "SUPUESTO: se rechaza con el mensaje de límite"
+    errores = pytest_compila_y_cubre(_salida(CODIGO_OK), previas)
+    assert errores == ["test_cp_rf12_01: el «entonces» de CP-RF12-01 es un SUPUESTO; consérvalo en el docstring o en un comentario"]
+    con_supuesto = CODIGO_OK.replace('"""CP-RF12-01 @RF12 positivo · REG-RF12-01"""', '"""CP-RF12-01 @RF12 positivo · REG-RF12-01 · SUPUESTO"""')
+    assert pytest_compila_y_cubre(_salida(con_supuesto), previas) == []

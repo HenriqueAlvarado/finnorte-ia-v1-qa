@@ -19,7 +19,9 @@ Reglas (código, no modelo):
   9. sin datos con forma de PII (correo, número de 18 dígitos, teléfono de 10): los datos
      sintéticos van como marcadores <CORREO_SINTETICO_1>, <CLABE_VALIDA_1>… (qa-08);
  10. no hay dos funciones con el mismo nombre: Python se queda con la última y pytest
-     nunca corre la primera, así que un caso desaparece sin aviso.
+     nunca corre la primera, así que un caso desaparece sin aviso;
+ 11. si el «entonces» de un caso trae SUPUESTO, su test conserva la palabra SUPUESTO (regla 6
+     del prompt): así QA ve qué valor esperado no venía en el requisito y nadie lo toma como dato.
 """
 from __future__ import annotations
 
@@ -139,9 +141,12 @@ def pytest_compila_y_cubre(salida: Any, previas: dict) -> list[str]:
             errores.append(f"{nombre}: no tiene assert ni pytest.raises")
         elif not _prueba_al_sistema(fn):
             errores.append(f"{nombre}: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)")
+        fuente_fn = ast.get_source_segment(codigo, fn) or ""
         regla = caso.get("regla_citada")
-        if regla and regla not in (ast.get_source_segment(codigo, fn) or ""):
+        if regla and regla not in fuente_fn:
             errores.append(f"{nombre}: no cita la regla {regla}")
+        if "SUPUESTO" in str(caso.get("entonces", "")) and "SUPUESTO" not in fuente_fn:
+            errores.append(f"{nombre}: el «entonces» de {caso['id_caso']} es un SUPUESTO; consérvalo en el docstring o en un comentario")
 
     digitos = re.sub(r"\D", "", codigo)
     if any(d.lower() in codigo.lower() for d in DATOS_PROHIBIDOS) or any(d in digitos for d in DIGITOS_PROHIBIDOS):
