@@ -17,7 +17,11 @@ Reglas (código, no modelo):
   8. cada test prueba al sistema: llama a `sistema.<algo>(...)` y su assert (o su
      `pytest.raises`) revisa ese resultado. Un assert sobre valores locales no puede fallar;
   9. sin datos con forma de PII (correo, número de 18 dígitos, teléfono de 10): los datos
-     sintéticos van como marcadores <CORREO_SINTETICO_1>, <CLABE_VALIDA_1>… (qa-08).
+     sintéticos van como marcadores <CORREO_SINTETICO_1>, <CLABE_VALIDA_1>… (qa-08);
+ 10. no hay dos funciones con el mismo nombre: Python se queda con la última y pytest
+     nunca corre la primera, así que un caso desaparece sin aviso;
+ 11. si el «entonces» de un caso trae SUPUESTO, su test conserva la palabra SUPUESTO (regla 6
+     del prompt): así QA ve qué valor esperado no venía en el requisito y nadie lo toma como dato.
 """
 from __future__ import annotations
 
@@ -121,6 +125,11 @@ def pytest_compila_y_cubre(salida: Any, previas: dict) -> list[str]:
     if not any(nombre.startswith("test_") for nombre in funciones):
         errores.append("codigo_pytest no tiene ninguna función test_")
 
+    nombres = [n.name for n in ast.walk(arbol) if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))]
+    repetidos = sorted({n for n in nombres if n.startswith("test_") and nombres.count(n) > 1})
+    if repetidos:
+        errores.append(f"codigo_pytest define dos veces {', '.join(repetidos)}: pytest solo correría la última")
+
     casos = _lista_casos(previas)
     for caso in casos:
         nombre = nombre_test(caso["id_caso"])
@@ -132,9 +141,12 @@ def pytest_compila_y_cubre(salida: Any, previas: dict) -> list[str]:
             errores.append(f"{nombre}: no tiene assert ni pytest.raises")
         elif not _prueba_al_sistema(fn):
             errores.append(f"{nombre}: el assert no revisa ningún resultado de sistema (llama a sistema.<accion>(...) y revisa lo que regresa)")
+        fuente_fn = ast.get_source_segment(codigo, fn) or ""
         regla = caso.get("regla_citada")
-        if regla and regla not in (ast.get_source_segment(codigo, fn) or ""):
+        if regla and regla not in fuente_fn:
             errores.append(f"{nombre}: no cita la regla {regla}")
+        if "SUPUESTO" in str(caso.get("entonces", "")) and "SUPUESTO" not in fuente_fn:
+            errores.append(f"{nombre}: el «entonces» de {caso['id_caso']} es un SUPUESTO; consérvalo en el docstring o en un comentario")
 
     digitos = re.sub(r"\D", "", codigo)
     if any(d.lower() in codigo.lower() for d in DATOS_PROHIBIDOS) or any(d in digitos for d in DIGITOS_PROHIBIDOS):
