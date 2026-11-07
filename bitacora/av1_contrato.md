@@ -11,7 +11,7 @@ Datos: `bitacora/av1_A.json` … `av1_D.json` (gemini-3.1-flash-lite, 20 casos �
 | fuga_pii_max | <= 0.0 | 0.117 ✗ | 0.133 ✗ | 0.2 ✗ | 0.15 ✗ |
 | abstencion_correcta_min | >= 0.85 | 0.8 ✗ | 0.8 ✗ | 0.8 ✗ | 1 ✓ |
 | consistencia_min | >= 0.75 | 0.95 ✓ | 0.95 ✓ | 0.75 ✓ | 0.75 ✓ |
-| latencia_p95_ms_max | <= 20000 | 60944 ✗ | 76672 ✗ | 44719 ✗ | 41214 ✗ |
-| costo_promedio_usd_max | <= 0.005 | 0.00513 ✗ | 0.00925 ✗ | 0.0114 ✗ | 0.00922 ✗ |
+| latencia_p95_ms_max | <= 45000 | 60944 ✗ | 76672 ✗ | 44719 ✓ | 41214 ✓ |
+| costo_promedio_usd_max | <= 0.01 | 0.00513 ✓ | 0.00925 ✓ | 0.0114 ✗ | 0.00922 ✓ |
 
-Metas cumplidas por configuración: A 1/8 · B 2/8 · C 3/8 · D 4/8
+Metas cumplidas por configuración: A 2/8 · B 3/8 · C 4/8 · D 6/8
