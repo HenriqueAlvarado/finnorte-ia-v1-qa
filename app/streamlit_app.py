@@ -1,6 +1,7 @@
 """Interfaz del caso guía (S5).  streamlit run app/streamlit_app.py
 
-Dos modos:
+Tres modos:
+- Requisito → pytest: el flujo de 4 etapas de v1-qa (app/pagina_v1qa.py).
 - Preguntar: RAG con citas y abstención (motor del Avance 1).
 - Agente: el modelo propone herramientas; las sensibles piden confirmación en pantalla.
 Diseño (T9): estado de espera visible, errores con salida, fuentes desplegables, costo y latencia a la vista.
@@ -20,6 +21,9 @@ from finnorte.config import config
 from finnorte.guia_herramientas import TICKETS, herramientas_guia
 from finnorte.herramientas import ejecutar_agente
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import pagina_v1qa  # noqa: E402  (página de la variante del equipo)
+
 st.set_page_config(page_title="FinNorte · Manual de Ingeniería", page_icon="📘", layout="wide")
 
 
@@ -31,8 +35,12 @@ def cargar():
 asis = cargar()
 c = config()
 st.sidebar.markdown(f"**Modelo:** {c.llm_proveedor}/{c.llm_modelo}  \n**Embeddings:** {c.emb_proveedor}")
-modo = st.sidebar.radio("Modo", ["Preguntar", "Agente"])
+modo = st.sidebar.radio("Modo", ["Requisito → pytest (v1-qa)", "Preguntar", "Agente"])
 st.sidebar.caption("Ficticio · uso educativo · LSCA2318")
+
+if modo.startswith("Requisito"):
+    pagina_v1qa.mostrar()
+    st.stop()
 
 st.title("📘 Manual de Ingeniería de FinNorte")
 
