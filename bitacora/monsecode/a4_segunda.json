@@ -1,0 +1,137 @@
+[
+  {
+    "entrada": "RF07-registro",
+    "requisito_chars": 307,
+    "flujo_ok": true,
+    "abstuvo": false,
+    "n_casos": 8,
+    "tipos": [
+      "limite",
+      "negativo",
+      "positivo"
+    ],
+    "archivo": "test_rf07.py",
+    "hallazgos_validador": [],
+    "aviso": "",
+    "pytest": {
+      "ok": true,
+      "aprobadas": 0,
+      "falladas": 0,
+      "omitidas": 8,
+      "errores": 0,
+      "segundos": 0.55
+    }
+  },
+  {
+    "entrada": "RF12-transferencia",
+    "requisito_chars": 299,
+    "flujo_ok": true,
+    "abstuvo": false,
+    "n_casos": 13,
+    "tipos": [
+      "idempotencia",
+      "limite",
+      "limite_exacto",
+      "monto_cero",
+      "monto_negativo",
+      "negativo",
+      "positivo",
+      "un_centavo_arriba"
+    ],
+    "archivo": "test_rf12.py",
+    "hallazgos_validador": [],
+    "aviso": "",
+    "pytest": {
+      "ok": true,
+      "aprobadas": 0,
+      "falladas": 0,
+      "omitidas": 13,
+      "errores": 0,
+      "segundos": 0.54
+    }
+  },
+  {
+    "entrada": "RF15-limite-diario",
+    "requisito_chars": 174,
+    "flujo_ok": true,
+    "abstuvo": false,
+    "n_casos": 8,
+    "tipos": [
+      "idempotencia",
+      "limite",
+      "limite_exacto",
+      "monto_cero",
+      "monto_negativo",
+      "negativo",
+      "positivo",
+      "un_centavo_arriba"
+    ],
+    "archivo": "test_rf15.py",
+    "hallazgos_validador": [],
+    "aviso": "",
+    "pytest": {
+      "ok": true,
+      "aprobadas": 0,
+      "falladas": 0,
+      "omitidas": 8,
+      "errores": 0,
+      "segundos": 0.53
+    }
+  },
+  {
+    "entrada": "RF18-bloqueo-tarjeta",
+    "requisito_chars": 218,
+    "flujo_ok": true,
+    "abstuvo": false,
+    "n_casos": 8,
+    "tipos": [
+      "idempotencia",
+      "limite",
+      "limite_exacto",
+      "monto_cero",
+      "monto_negativo",
+      "negativo",
+      "positivo",
+      "un_centavo_arriba"
+    ],
+    "archivo": "test_rf18.py",
+    "hallazgos_validador": [],
+    "aviso": "",
+    "pytest": {
+      "ok": true,
+      "aprobadas": 0,
+      "falladas": 0,
+      "omitidas": 8,
+      "errores": 0,
+      "segundos": 0.59
+    }
+  },
+  {
+    "entrada": "RF21-comisiones",
+    "requisito_chars": 129,
+    "flujo_ok": true,
+    "abstuvo": false,
+    "n_casos": 8,
+    "tipos": [
+      "idempotencia",
+      "limite",
+      "limite_exacto",
+      "monto_cero",
+      "monto_negativo",
+      "negativo",
+      "positivo",
+      "un_centavo_arriba"
+    ],
+    "archivo": "test_rf21.py",
+    "hallazgos_validador": [],
+    "aviso": "",
+    "pytest": {
+      "ok": true,
+      "aprobadas": 0,
+      "falladas": 0,
+      "omitidas": 8,
+      "errores": 0,
+      "segundos": 0.53
+    }
+  }
+]

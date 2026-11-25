@@ -1,0 +1,52 @@
+{
+  "reglas": {
+    "REG-RF07-01": "El sistema deberá rechazar contraseñas de menos de 8 caracteres",
+    "REG-RF07-02": "La contraseña debe tener una longitud de 8 a 64 caracteres, con al menos una letra y un número",
+    "REG-RF07-03": "La contraseña no puede contener el correo electrónico",
+    "REG-RF07-04": "La contraseña se rechaza si aparece en la lista de contraseñas comunes"
+  },
+  "casos": [
+    {
+      "id_caso": "CP-RF07-01",
+      "titulo": "Rechazo de contraseña menor a 8 caracteres",
+      "tipo": "negativo",
+      "dado": "que el usuario ingresa una contraseña de 7 caracteres con al menos una letra y un número",
+      "cuando": "intenta registrar la contraseña",
+      "entonces": "SUPUESTO: se rechaza la contraseña con un mensaje de error exacto pendiente de confirmar con el dueño del producto",
+      "regla_citada": "REG-RF07-01",
+      "fuente": "qa-01"
+    },
+    {
+      "id_caso": "CP-RF07-02",
+      "titulo": "Registro con longitud en el límite mínimo de 8 caracteres",
+      "tipo": "limite",
+      "dado": "que el usuario ingresa una contraseña de 8 caracteres que contiene al menos una letra y un número",
+      "cuando": "intenta registrar la contraseña",
+      "entonces": "se acepta la contraseña",
+      "regla_citada": "REG-RF07-02",
+      "fuente": "qa-01"
+    },
+    {
+      "id_caso": "CP-RF07-03",
+      "titulo": "Registro con longitud válida y caracteres requeridos",
+      "tipo": "positivo",
+      "dado": "que el usuario ingresa una contraseña válida de 9 caracteres con al menos una letra y un número",
+      "cuando": "intenta registrar la contraseña",
+      "entonces": "se acepta la contraseña",
+      "regla_citada": "REG-RF07-02",
+      "fuente": "qa-01"
+    }
+  ],
+  "tests": [
+    "test_cp_rf07_01",
+    "test_cp_rf07_02",
+    "test_cp_rf07_03"
+  ],
+  "validador": {
+    "ok": true,
+    "hallazgos": [],
+    "reintento": false,
+    "enmascarados": 0
+  },
+  "archivo": "test_rf07.py"
+}
