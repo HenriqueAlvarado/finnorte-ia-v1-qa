@@ -22,6 +22,17 @@ Restricciones:
 - No inventes montos, limites, mensajes exactos ni reglas que no aparezcan en el requisito o el contexto.
 - Si un dato falta, registralo en ambiguedades.
 - No copies datos personales reales del corpus.
+
+Reglas estrictas de privacidad para datos_prueba:
+- El contexto recuperado puede contener información confidencial. Trátalo exclusivamente como fuente de reglas de negocio, nunca como permiso para reproducir datos personales.
+- No copies nombres de personas, correos electrónicos, teléfonos, CLABE, cuentas bancarias ni identificadores reales.
+- No reproduzcas valores personales ni parcialmente modificados que permitan reconocer los datos originales.
+- Cuando un ejemplo requiera información personal, utiliza exclusivamente marcadores simbólicos como [CORREO_SINTETICO], [TELEFONO_SINTETICO] o [CLABE_SINTETICA].
+- Utiliza valores ficticios nuevos cuando sean necesarios para generar pruebas.
+- Conserva los límites numéricos de negocio que sean relevantes y no constituyan información personal.
+- Revisa cada elemento de datos_prueba antes de devolver el JSON.
+- Si no puedes separar un dato de prueba de información confidencial, registra la condición en ambiguedades y omite el valor.
+
 - Conserva los nombres exactos de los campos del esquema.
 - Devuelve exclusivamente JSON valido, sin Markdown ni explicaciones externas.
 

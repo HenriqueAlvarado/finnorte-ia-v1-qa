@@ -124,10 +124,19 @@ elif modo == "Mi variante":
 else:
     st.title("🤖 Agente con confirmación humana")
     st.caption("El agente consulta el manual y las ventanas de despliegue. Crear un ticket requiere TU autorización.")
-    tarea = st.text_area("Tarea", "Quiero desplegar un cambio de riesgo alto en pagos-api el 2026-11-24. ¿Se puede? Si sí, crea el ticket.")
+    usar_variante = st.checkbox("Utilizar mi agente v1-qa con ejecución de pytest")
+    tarea_default = (
+        "Ejecuta test_rf03.py en el sandbox y presenta el resultado para mi autorización."
+        if usar_variante else
+        "Quiero desplegar un cambio de riesgo alto en pagos-api el 2026-11-24. ¿Se puede? Si sí, crea el ticket."
+    )
+    tarea = st.text_area("Tarea", tarea_default)
     if st.button("Ejecutar agente", type="primary"):
-        with st.spinner("El agente está trabajando (cada paso es una llamada a Gemini)…"):
-            st_, out = llamar("POST", "/v1/agente", json={"tarea": tarea})
+        with st.spinner("El agente está trabajando…"):
+            st_, out = llamar(
+                "POST", "/v1/agente",
+                json={"tarea": tarea, "variante": usar_variante}
+            )
         if st_ != 200:
             mostrar_error(st_, out)
         else:

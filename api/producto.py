@@ -36,6 +36,9 @@ from pydantic import BaseModel, Field
 
 from api.auth import VIGENCIA_S, Autenticador, ErrorAuth, validar_token
 from finnorte import agente_servicio, llm, variante
+from finnorte.herramientas import Herramienta, ejecutar_agente
+from finnorte.ejecutor_pytest import ejecutar_pytest
+from finnorte.validador_a4 import validar_plan_v1_qa
 from finnorte.caso_guia import asistente as caso_guia
 from finnorte.caso_guia import motor_demo
 from finnorte.caso_guia.herramientas import herramientas_caso_guia
@@ -166,8 +169,36 @@ def ejecutar_variante(e: EntradaVariante, usuario: str = Depends(usuario_actual)
     return out
 
 
+class RequisitoQA(BaseModel):
+    requisito: str = Field(min_length=10, max_length=12000)
+
+
+@app.post("/v1/v1-qa")
+def ejecutar_v1_qa(
+    entrada: RequisitoQA,
+    usuario: str = Depends(usuario_actual)
+):
+    """Ejecuta el motor propio v1-qa mediante el servicio autenticado."""
+    try:
+        resultado = variante.sistema({
+            "requisito": entrada.requisito
+        })
+    except ValueError as e:
+        raise ErrorHTTP(422, "Entrada inválida", str(e)[:200])
+    except llm.LLMError as e:
+        raise ErrorHTTP(
+            503,
+            "Proveedor del modelo no disponible",
+            str(e)[:200]
+        )
+
+    return resultado
+
+
+
 class Tarea(BaseModel):
     tarea: str = Field(min_length=5, max_length=800)
+    variante: bool = False
 
 
 class Decision(BaseModel):
@@ -178,18 +209,52 @@ def _herramientas():
     return herramientas_caso_guia()     # A4: agrega aquí las herramientas de TU variante
 
 
+def _herramientas_v1qa():
+    return [
+        Herramienta(
+            nombre="ejecutar_pytest",
+            descripcion=(
+                "Ejecuta un archivo test_*.py previamente validado "
+                "en el sandbox Docker sin red y con límite de 30 segundos"
+            ),
+            esquema={
+                "type": "object",
+                "required": ["archivo"],
+                "additionalProperties": False,
+                "properties": {
+                    "archivo": {
+                        "type": "string",
+                        "pattern": "^test_[A-Za-z0-9_]+[.]py$"
+                    }
+                }
+            },
+            funcion=ejecutar_pytest,
+            sensible=True
+        )
+    ]
+
+
 @app.post("/v1/agente")
 def agente(t: Tarea, usuario: str = Depends(usuario_actual)):
     try:
-        # A4: agente_servicio.iniciar(t.tarea, usuario, _herramientas(), ejecutor=herramientas.ejecutar_agente, validador=tu_validador)
+        if t.variante:
+            return agente_servicio.iniciar(
+                t.tarea,
+                usuario,
+                _herramientas_v1qa(),
+                ejecutor=ejecutar_agente,
+                validador=validar_plan_v1_qa
+            )
         return agente_servicio.iniciar(t.tarea, usuario, _herramientas())
     except llm.LLMError as e:
         raise ErrorHTTP(503, "Proveedor del modelo no disponible", str(e)[:200])
+    except (RuntimeError, OSError) as e:
+        raise ErrorHTTP(503, "Ejecutor no disponible", type(e).__name__)
 
 
 @app.post("/v1/agente/confirmar/{id_}")
 def confirmar(id_: str, d: Decision, usuario: str = Depends(usuario_actual)):
     try:
-        return agente_servicio.resolver(id_, usuario, d.aprobar, _herramientas())
+        return agente_servicio.resolver(id_, usuario, d.aprobar, _herramientas() + _herramientas_v1qa())
     except KeyError as e:
         raise ErrorHTTP(404, "Acción no encontrada", str(e))
