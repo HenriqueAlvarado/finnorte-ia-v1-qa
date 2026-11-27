@@ -180,6 +180,8 @@ class EntradaQA(BaseModel):
     requisito: str = Field(min_length=10, max_length=4000,
                            description='Ej. "RF12 · Transferencia SPEI\\nRF12.4 Una solicitud repetida no deberá generar un doble cargo."')
     version_prompt: int | None = Field(default=None, ge=1, le=2, description="1 o 2; por defecto usa la vigente (2)")
+    usar_rag: bool | None = Field(default=None, description="A4: permite forzar RAG on/off para comparar mejoras")
+    controles: bool | None = Field(default=None, description="A4: permite forzar verificacion de citas on/off para comparar mejoras")
 
 
 @app.post("/v1/qa")
@@ -187,7 +189,14 @@ def ejecutar_qa(e: EntradaQA, usuario: str = Depends(usuario_actual)):
     """A3: MI endpoint de variante. Llama a variante.sistema() (el motor real del Avance 1,
     no el demo). Protegido por token (Depends(usuario_actual), que también aplica el límite
     de solicitudes por minuto) y con errores en problem+json (ing-07) vía ErrorHTTP."""
-    cfg = {"version_prompt": e.version_prompt} if e.version_prompt else None
+    cfg = {}
+    if e.version_prompt:
+        cfg["version_prompt"] = e.version_prompt
+    if e.usar_rag is not None:
+        cfg["usar_rag"] = e.usar_rag
+    if e.controles is not None:
+        cfg["controles"] = e.controles
+    cfg = cfg or None
     try:
         out = variante.sistema({"requisito": e.requisito}, config=cfg)
     except ValueError as err:
