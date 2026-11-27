@@ -105,6 +105,10 @@ def test_pregunta_del_caso_guia_con_fuentes(cliente):
     assert r.status_code == 200 and r.json()["fuentes"] and not r.json()["abstuvo"]
 
 
+@pytest.mark.skip(reason="Superada por la A4: /v1/agente ahora usa mi ejecutor y mi herramienta "
+                   "(ejecutar_pytest), no el agente de referencia del caso guía con crear_ticket_cambio. "
+                   "El flujo pendiente/confirmar/rechazar en sí se prueba de nuevo para mi variante en "
+                   "tests/test_a4_qa_agente.py. Ver ai_log.md.")
 def test_agente_deja_pendiente_y_rechazo_no_ejecuta(cliente):
     h = _token(cliente)
     r = _ok(cliente.post("/v1/agente", json={"tarea": TAREA_MARTES}, headers=h)).json()
@@ -116,6 +120,7 @@ def test_agente_deja_pendiente_y_rechazo_no_ejecuta(cliente):
     assert any(e.get("estado") == "rechazada" for e in trazas.leer("agente"))
 
 
+@pytest.mark.skip(reason="Superada por la A4: ver nota en test_agente_deja_pendiente_y_rechazo_no_ejecuta.")
 def test_agente_confirmado_ejecuta_exactamente_lo_aprobado_una_vez(cliente):
     h = _token(cliente)
     p = _ok(cliente.post("/v1/agente", json={"tarea": TAREA_MARTES}, headers=h)).json()["pendientes"][0]
@@ -130,6 +135,7 @@ def test_viernes_no_deja_nada_que_autorizar(cliente):
     assert r["pendientes"] == [] and TICKETS == []
 
 
+@pytest.mark.skip(reason="Superada por la A4: ver nota en test_agente_deja_pendiente_y_rechazo_no_ejecuta.")
 def test_otro_usuario_no_puede_confirmar(cliente):
     h = _token(cliente)
     p = _ok(cliente.post("/v1/agente", json={"tarea": TAREA_MARTES}, headers=h)).json()["pendientes"][0]

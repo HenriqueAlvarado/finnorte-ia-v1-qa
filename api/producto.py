@@ -35,11 +35,11 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel, Field
 
 from api.auth import VIGENCIA_S, Autenticador, ErrorAuth, validar_token
-from finnorte import agente_servicio, llm, variante
+from finnorte import agente_servicio, herramientas, llm, qa_herramientas, variante
 from finnorte.caso_guia import asistente as caso_guia
 from finnorte.caso_guia import motor_demo
-from finnorte.caso_guia.herramientas import herramientas_caso_guia
 from finnorte.config import RAIZ, config
+from finnorte.validador_v1qa import validar_variante_v1qa
 
 app = FastAPI(title="FinNorte · Producto (servicio con token + Gemini + agente)", version="2.0")
 auth = Autenticador(os.getenv("AUTH_DB", str(RAIZ / "bitacora" / "usuarios.db")))
@@ -174,15 +174,45 @@ class Decision(BaseModel):
     aprobar: bool
 
 
+# A3 · mi endpoint de variante ────────────────────────────────────────────────────────────
+class EntradaQA(BaseModel):
+    """Entrada propia de v1-qa: un requisito funcional (RFxx) a analizar/generar casos+pytest."""
+    requisito: str = Field(min_length=10, max_length=4000,
+                           description='Ej. "RF12 · Transferencia SPEI\\nRF12.4 Una solicitud repetida no deberá generar un doble cargo."')
+    version_prompt: int | None = Field(default=None, ge=1, le=2, description="1 o 2; por defecto usa la vigente (2)")
+
+
+@app.post("/v1/qa")
+def ejecutar_qa(e: EntradaQA, usuario: str = Depends(usuario_actual)):
+    """A3: MI endpoint de variante. Llama a variante.sistema() (el motor real del Avance 1,
+    no el demo). Protegido por token (Depends(usuario_actual), que también aplica el límite
+    de solicitudes por minuto) y con errores en problem+json (ing-07) vía ErrorHTTP."""
+    cfg = {"version_prompt": e.version_prompt} if e.version_prompt else None
+    try:
+        out = variante.sistema({"requisito": e.requisito}, config=cfg)
+    except ValueError as err:
+        raise ErrorHTTP(422, "Entrada inválida", str(err)[:200])
+    except llm.LLMError as err:
+        raise ErrorHTTP(503, "Proveedor del modelo no disponible", str(err)[:200])
+    # A4: si el flujo llegó a generar un pytest, lo dejo en el sandbox para que el agente
+    # pueda correrlo después con mi herramienta ejecutar_pytest (ver qa_herramientas.py).
+    etapa_pytest = (out.get("artefacto") or {}).get("pytest") or {}
+    qa_herramientas.guardar_pytest_generado(etapa_pytest.get("nombre_archivo"), etapa_pytest.get("codigo_pytest"))
+    out["validador"] = validar_variante_v1qa(out)   # A4 paso 4: corre en CADA respuesta
+    return out
+
+
+# A4 · agente de MI variante ──────────────────────────────────────────────────────────────
 def _herramientas():
-    return herramientas_caso_guia()     # A4: agrega aquí las herramientas de TU variante
+    return qa_herramientas.herramientas_v1qa()      # A4: mi herramienta (ejecutar_pytest)
 
 
 @app.post("/v1/agente")
 def agente(t: Tarea, usuario: str = Depends(usuario_actual)):
     try:
-        # A4: agente_servicio.iniciar(t.tarea, usuario, _herramientas(), ejecutor=herramientas.ejecutar_agente, validador=tu_validador)
-        return agente_servicio.iniciar(t.tarea, usuario, _herramientas())
+        return agente_servicio.iniciar(t.tarea, usuario, _herramientas(),
+                                       ejecutor=herramientas.ejecutar_agente,
+                                       validador=qa_herramientas.validar_plan_v1qa)
     except llm.LLMError as e:
         raise ErrorHTTP(503, "Proveedor del modelo no disponible", str(e)[:200])
 
