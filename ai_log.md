@@ -214,3 +214,7 @@ actividad de que copiarlo tal cual no cuenta como mi implementacion.
   agente_ref.py, que mi ejecutor propio no replica a proposito; el
   razonamiento completo esta en el mensaje de skip de cada una.
 - Suite completa (python -m pytest -q): 163 passed, 9 skipped.
+
+## Demo A4
+
+Video de 2 minutos: https://youtu.be/GxrO7YX6nLI
